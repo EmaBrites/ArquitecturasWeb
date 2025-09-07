@@ -1,18 +1,18 @@
 package dto;
 
-public class ClienteDTO {
+public class ProductoDTO {
 
-    public static final String ID = "idCliente";
+    public static final String ID = "id";
     public static final String NOMBRE = "nombre";
-    public static final String EMAIL = "email";
+    public static final String VALOR = "valor";
     private final int id;
     private final String nombre;
-    private final String email;
+    private final float valor;
 
-    public ClienteDTO(int id, String nombre, String email) {
+    public ProductoDTO(int id, String nombre, float precio) {
         this.id = id;
         this.nombre = nombre;
-        this.email = email;
+        this.valor = precio;
     }
 
     public int getId() {
@@ -23,15 +23,16 @@ public class ClienteDTO {
         return nombre;
     }
 
-    public String getEmail() {
-        return email;
+    public float getValor() {
+        return valor;
     }
 
+    @Override
     public String toString() {
-        return "ClienteDTO{" +
+        return "ProductoDTO{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
-                ", email='" + email + '\'' +
+                ", precio=" + valor +
                 '}';
     }
 }

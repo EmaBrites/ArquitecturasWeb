@@ -1,7 +1,7 @@
 package utils;
 
+import dao.cliente.ClienteDAO;
 import dao.cliente.ClienteDAOImpl;
-import dao.factory.DAOFactory;
 import dao.factory.MySqlDAOFactory;
 import entities.Cliente;
 import org.apache.commons.csv.CSVFormat;
@@ -9,9 +9,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.FileReader;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -109,6 +107,7 @@ public class MySqlHelper {
             System.out.println("Populating DB...");
             conn.setAutoCommit(false); // Desactiva autocommit para manejar las transacciones manualmente
             processCSV("src\\main\\resources\\clientes.csv", "Cliente");
+            conn.commit();
             System.out.println("Datos insertados correctamente");
     }
 
@@ -123,7 +122,7 @@ public class MySqlHelper {
     }
 
     private void processClientes(CSVParser parser) throws SQLException {
-        ClienteDAOImpl clienteDAO = new ClienteDAOImpl();
+        ClienteDAO clienteDAO = ClienteDAOImpl.getInstance();
 
         for(CSVRecord row : parser) {
             if(row.size() >= 3) {
