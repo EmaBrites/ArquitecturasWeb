@@ -1,18 +1,22 @@
 package dao.cliente;
 
 import dao.factory.MySqlDAOFactory;
+import dto.ClienteDTO;
 import entities.Cliente;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteDAOImpl implements ClienteDAO {
 
     private static ClienteDAOImpl instance;
     private final Connection conn;
 
-    public ClienteDAOImpl() throws SQLException {
+    private ClienteDAOImpl() throws SQLException {
         this.conn = MySqlDAOFactory.getConn();
     }
 
@@ -24,28 +28,60 @@ public class ClienteDAOImpl implements ClienteDAO {
     }
 
     @Override
-    public void insert(Cliente c) {
+    public void insert(Cliente c) throws SQLException {
         String query = "INSERT INTO clientes (idCliente, nombre, email) VALUES (?, ?, ?)";
-        PreparedStatement ps = null;
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, c.getId());
+        ps.setString(2, c.getNombre());
+        ps.setString(3, c.getEmail());
+        ps.executeUpdate();
+    }
 
-        try {
-            ps = conn.prepareStatement(query);
-            ps.setInt(1, c.getId());
-            ps.setString(2, c.getNombre());
-            ps.setString(3, c.getEmail());
-            ps.executeUpdate();
-        } catch (
-                SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                conn.commit();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+    @Override
+    public List<ClienteDTO> getAll() throws SQLException {
+        List<ClienteDTO> list = new ArrayList<>();
+        String query = "SELECT * FROM clientes";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt(ClienteDTO.ID);
+            String nombre = rs.getString(ClienteDTO.NOMBRE);
+            String email = rs.getString(ClienteDTO.EMAIL);
+            ClienteDTO clienteDTO = new ClienteDTO(id, nombre, email);
+            list.add(clienteDTO);
         }
+        return list;
+    }
+
+    @Override
+    public ClienteDTO getById(int id) throws SQLException {
+        String query = "SELECT * FROM clientes WHERE idCliente = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            String nombre = rs.getString(ClienteDTO.NOMBRE);
+            String email = rs.getString(ClienteDTO.EMAIL);
+            return new ClienteDTO(id, nombre, email);
+        }
+        return null;
+    }
+
+    @Override
+    public void update(Cliente c) throws SQLException {
+        String query = "UPDATE clientes SET nombre = ?, email = ? WHERE idCliente = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1, c.getNombre());
+        ps.setString(2, c.getEmail());
+        ps.setInt(3, c.getId());
+        ps.executeUpdate();
+    }
+
+    @Override
+    public void delete(int id) throws SQLException {
+        String query = "DELETE FROM clientes WHERE idCliente = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, id);
+        ps.executeUpdate();
     }
 }
