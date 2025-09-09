@@ -27,7 +27,7 @@ public class MySqlHelper {
     }
 
     public void closeConnection() {
-        if (conn != null){
+        if (conn != null) {
             try {
                 conn.close();
             } catch (Exception e) {
@@ -51,9 +51,9 @@ public class MySqlHelper {
             throw new SQLException("La conexión a la base de datos no está abierta.");
         }
 
-        String dropSQL = "DROP TABLE IF EXISTS "+ tableName;
+        String dropSQL = "DROP TABLE IF EXISTS " + tableName;
 
-        try (PreparedStatement stmt = conn.prepareStatement(dropSQL)){
+        try (PreparedStatement stmt = conn.prepareStatement(dropSQL)) {
             stmt.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -76,7 +76,7 @@ public class MySqlHelper {
         createTable("CREATE TABLE IF NOT EXISTS facturas(" +
                 "idFactura INT NOT NULL, " +
                 "idCliente INT NOT NULL, " +
-                "CONSTRAINT facturas_pk PRIMARY KEY (idFactura), "+
+                "CONSTRAINT facturas_pk PRIMARY KEY (idFactura), " +
                 "CONSTRAINT FK_idCliente FOREIGN KEY (idCliente) REFERENCES clientes (idCliente));");
 
         createTable("CREATE TABLE IF NOT EXISTS facturas_productos(" +
@@ -96,7 +96,7 @@ public class MySqlHelper {
             throw new SQLException("La conexión a la base de datos no está abierta.");
         }
 
-        try(PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -104,32 +104,57 @@ public class MySqlHelper {
     }
 
     public void populateDB() throws SQLException {
-            System.out.println("Populating DB...");
-            conn.setAutoCommit(false); // Desactiva autocommit para manejar las transacciones manualmente
-            processCSV("src\\main\\resources\\clientes.csv", "Cliente");
-            conn.commit();
-            System.out.println("Datos insertados correctamente");
+        System.out.println("Populating DB...");
+        conn.setAutoCommit(false); // Desactiva autocommit para manejar las transacciones manualmente
+        processCSV("src/main/resources/clientes.csv", "clientes");
+        processCSV("src/main/resources/productos.csv", "productos");
+        processCSV("src/main/resources/facturas.csv", "facturas");
+        processCSV("src/main/resources/facturas-productos.csv", "facturas_productos");
+        conn.commit();
+        System.out.println("Datos insertados correctamente");
     }
 
-    private void processCSV(String filePath, String entity){
-        System.out.println("Insertando "+ entity.toLowerCase() + "s...");
+    private void processCSV(String filePath, String entity) {
+        System.out.println("Insertando " + entity.replace('_', ' ') + "...");
+        try (CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(new FileReader(filePath))) {
 
-        try (CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(new FileReader(filePath))){
-            processClientes(parser);
+            switch (entity.toLowerCase()) {
+                case "clientes":
+                    processClientes(parser);
+                    break;
+                case "productos":
+                    processProductos(parser);
+                    break;
+                case "facturas":
+                    processFacturas(parser);
+                    break;
+                case "facturas_productos":
+                    processFacturasProductos(parser);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Entidad desconocida: " + entity);
+            }
+
+            conn.commit();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            try {
+                conn.rollback();
+            } catch (Exception ignored) {
+            }
+            throw new RuntimeException("Error al procesar " + entity + ": " + e.getMessage(), e);
         }
     }
+
 
     private void processClientes(CSVParser parser) throws SQLException {
         ClienteDAO clienteDAO = ClienteDAOImpl.getInstance();
 
-        for(CSVRecord row : parser) {
-            if(row.size() >= 3) {
+        for (CSVRecord row : parser) {
+            if (row.size() >= 3) {
                 String idString = row.get(0);
                 String nombre = row.get(1);
                 String email = row.get(2);
-                if(isValidNumber(idString) && !nombre.isEmpty() && !email.isEmpty()) {
+                if (isValidNumber(idString) && !nombre.isEmpty() && !email.isEmpty()) {
                     try {
                         int id = Integer.parseInt(idString);
                         Cliente cliente = new Cliente(id, nombre, email);
@@ -143,6 +168,60 @@ public class MySqlHelper {
         System.out.println("Clientes insertados");
 
     }
+
+    private void processProductos(CSVParser parser) throws SQLException {
+        String sql = "INSERT INTO productos (idProducto, nombre, valor) VALUES (?,?,?) " +
+                "ON DUPLICATE KEY UPDATE nombre=VALUES(nombre), valor=VALUES(valor)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (CSVRecord row : parser) {
+                int id = Integer.parseInt(row.get("idProducto"));
+                String nombre = row.get("nombre");
+                // por si el CSV viene con coma decimal
+                double valor = Double.parseDouble(row.get("valor").replace(",", "."));
+                ps.setInt(1, id);
+                ps.setString(2, nombre);
+                ps.setDouble(3, valor);
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+        System.out.println("Productos insertados");
+    }
+
+    private void processFacturas(CSVParser parser) throws SQLException {
+        String sql = "INSERT INTO facturas (idFactura, idCliente) VALUES (?,?) " +
+                "ON DUPLICATE KEY UPDATE idCliente=VALUES(idCliente)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (CSVRecord row : parser) {
+                int idFactura = Integer.parseInt(row.get("idFactura"));
+                int idCliente = Integer.parseInt(row.get("idCliente"));
+                ps.setInt(1, idFactura);
+                ps.setInt(2, idCliente);
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+        System.out.println("Facturas insertadas");
+    }
+
+    private void processFacturasProductos(CSVParser parser) throws SQLException {
+        String sql = "INSERT INTO facturas_productos (idFactura, idProducto, cantidad) VALUES (?,?,?) " +
+                "ON DUPLICATE KEY UPDATE cantidad=VALUES(cantidad)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (CSVRecord row : parser) {
+                int idFactura = Integer.parseInt(row.get("idFactura"));
+                int idProducto = Integer.parseInt(row.get("idProducto"));
+                int cantidad = Integer.parseInt(row.get("cantidad"));
+                ps.setInt(1, idFactura);
+                ps.setInt(2, idProducto);
+                ps.setInt(3, cantidad);
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+        System.out.println("Facturas-productos insertadas");
+    }
+
 
     private boolean isValidNumber(String str) {
 

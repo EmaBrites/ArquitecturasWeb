@@ -16,4 +16,6 @@ public interface ProductoDAO {
     ProductoDTO getById(int id) throws SQLException;
 
     List<ProductoDTO> getAll() throws SQLException;
+
+    ProductoDTO findProductoQueMasRecaudo();
 }

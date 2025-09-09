@@ -3,6 +3,8 @@ package dao.factory;
 import com.mysql.cj.jdbc.Driver;
 import dao.cliente.ClienteDAO;
 import dao.cliente.ClienteDAOImpl;
+import dao.producto.ProductoDAO;
+import dao.producto.ProductoDAOImpl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,7 +21,7 @@ public class MySqlDAOFactory extends DAOFactory {
         driver = new Driver();
     }
 
-    public static MySqlDAOFactory getInstance() throws SQLException {
+    public static DAOFactory getInstance() throws SQLException {
         if (instance == null) {
             instance = new MySqlDAOFactory();
         }
@@ -38,7 +40,14 @@ public class MySqlDAOFactory extends DAOFactory {
         return conn;
     }
 
+    @Override
     public ClienteDAO getClienteDAO() throws SQLException {
         return ClienteDAOImpl.getInstance();
     }
+
+    @Override
+    public ProductoDAO getProductoDAO() throws SQLException {
+        return ProductoDAOImpl.getInstance();
+    }
 }
+

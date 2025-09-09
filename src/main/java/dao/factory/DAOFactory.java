@@ -1,8 +1,8 @@
 package dao.factory;
 
 import dao.cliente.ClienteDAO;
-
 import java.sql.SQLException;
+import dao.producto.ProductoDAO;
 
 public abstract class DAOFactory {
     public static final int MYSQL = 1;
@@ -20,4 +20,5 @@ public abstract class DAOFactory {
                 return null;
         }
     }
+    public abstract ProductoDAO getProductoDAO() throws SQLException;
 }
