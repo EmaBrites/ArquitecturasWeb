@@ -1,8 +1,12 @@
+import dao.cliente.ClienteDAO;
 import dao.factory.DAOFactory;
 import dao.factory.MySqlDAOFactory;
 import dao.producto.ProductoDAO;
+import dto.ClienteDTO;
 import dto.ProductoDTO;
 import utils.MySqlHelper;
+
+import java.util.List;
 
 public class Main {
     public static void main(String []args) throws Exception {
@@ -21,6 +25,19 @@ public class Main {
         } else {
             System.out.println("Producto que más recaudó:");
             System.out.println(top); // imprime id, nombre y recaudación total
+        }
+
+
+        ClienteDAO clienteDAO = factory.getClienteDAO();
+        System.out.println(clienteDAO.getAll());
+
+
+        System.out.println("=== Clientes ordenados por facturación ===");
+        // Llama al método ClienteDAOImpl
+        List<ClienteDTO> clientes = clienteDAO.getClientesOrdenadosPorFacturacion();
+
+        for (ClienteDTO c : clientes) {
+            System.out.println(c);
         }
     }
 }

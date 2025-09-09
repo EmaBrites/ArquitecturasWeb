@@ -16,4 +16,7 @@ public interface ClienteDAO {
     void update(Cliente c) throws SQLException;
 
     void delete(int id) throws SQLException;
+
+    List<ClienteDTO> getClientesOrdenadosPorFacturacion() throws SQLException;
+
 }

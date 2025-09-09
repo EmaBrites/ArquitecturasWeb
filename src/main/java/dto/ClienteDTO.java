@@ -8,6 +8,7 @@ public class ClienteDTO {
     private final int id;
     private final String nombre;
     private final String email;
+    private double totalFacturado;
 
     public ClienteDTO(int id, String nombre, String email) {
         this.id = id;
@@ -27,11 +28,21 @@ public class ClienteDTO {
         return email;
     }
 
+    public double getTotalFacturado() {
+        return totalFacturado;
+    }
+
+    public void setTotalFacturado(double totalFacturado) {
+        this.totalFacturado = totalFacturado;
+    }
+
+    @Override
     public String toString() {
-        return "ClienteDTO{" +
+        return "Cliente{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
                 ", email='" + email + '\'' +
+                ", totalFacturado=" + totalFacturado +
                 '}';
     }
 }
