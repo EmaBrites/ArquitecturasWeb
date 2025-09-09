@@ -84,4 +84,31 @@ public class ClienteDAOImpl implements ClienteDAO {
         ps.setInt(1, id);
         ps.executeUpdate();
     }
+
+    @Override
+    public List<ClienteDTO> getClientesOrdenadosPorFacturacion() throws SQLException {
+        List<ClienteDTO> clientes = new ArrayList<>();
+
+        String query = "SELECT c.idCliente, c.nombre, c.email, " +
+                "       SUM(p.valor * fp.cantidad) AS total " +
+                "FROM clientes c " +
+                "JOIN facturas f ON c.idCliente = f.idCliente " +
+                "JOIN facturas_productos fp ON f.idFactura = fp.idFactura " +
+                "JOIN productos p ON fp.idProducto = p.idProducto " +
+                "GROUP BY c.idCliente, c.nombre, c.email " +
+                "ORDER BY total DESC";
+
+        try (PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                ClienteDTO cliente = new ClienteDTO(rs.getInt("idCliente"),
+                        rs.getString("nombre"),
+                        rs.getString("email"));
+                cliente.setTotalFacturado(rs.getDouble("total"));
+                clientes.add(cliente);
+            }
+        }
+        return clientes;
+    }
+
 }
