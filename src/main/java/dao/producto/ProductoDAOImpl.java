@@ -26,6 +26,15 @@ public class ProductoDAOImpl implements ProductoDAO {
         return instance;
     }
 
+    // --- SQL de la parte 3 ---
+    private static final String SQL_TOP_1 =
+            "SELECT p.idProducto, p.nombre, SUM(fp.cantidad * p.valor) AS recaudacion " +
+                    "FROM facturas_productos fp " +
+                    "JOIN productos p ON p.idProducto = fp.idProducto " +
+                    "GROUP BY p.idProducto, p.nombre " +
+                    "ORDER BY recaudacion DESC " +
+                    "LIMIT 1";
+
     @Override
     public void insert(Producto producto) throws SQLException {
         String sql = "INSERT INTO producto (id, nombre, precio) VALUES (?, ?, ?)";
@@ -66,6 +75,25 @@ public class ProductoDAOImpl implements ProductoDAO {
             return new ProductoDTO(id, nombre, valor);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public ProductoDTO findProductoQueMasRecaudo() {
+        try (
+             PreparedStatement ps = connection.prepareStatement(SQL_TOP_1);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return new ProductoDTO(
+                        rs.getInt("idProducto"),
+                        rs.getString("nombre"),
+                        rs.getFloat("recaudacion")
+                );
+            }
+            return null; // no hay datos
+        } catch (Exception e) {
+            throw new RuntimeException("Error obteniendo producto que más recaudó", e);
         }
     }
 
