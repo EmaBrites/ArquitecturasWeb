@@ -12,8 +12,7 @@ import java.util.Properties;
 
 public class MySqlDAOFactory extends DAOFactory {
 
-    //public static final String URI = "jdbc:mysql://localhost:3306/tpe1";
-    public static final String URI = "jdbc:mysql://localhost:3307/tpe1?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+    public static final String URI = "jdbc:mysql://localhost:3306/tpe1";
     public static MySqlDAOFactory instance;
     public static Connection conn;
     public static Driver driver;
