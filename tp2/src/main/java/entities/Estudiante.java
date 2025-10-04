@@ -3,6 +3,9 @@ package entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+
+import java.util.List;
 
 @Entity
 public class Estudiante {
@@ -14,12 +17,14 @@ public class Estudiante {
     private int edad;
     @Column
     private String genero;
-    @Id
+    @Column
     private int dni;
     @Column
     private String ciudad;
-    @Column
+    @Id
     private int numeroLibreta;
+    @OneToMany(mappedBy = "estudiante")
+    private List<EstudianteCarrera> estudianteCarreras;
 
     public Estudiante() {
     }
@@ -32,6 +37,11 @@ public class Estudiante {
         this.dni = dni;
         this.ciudad = ciudad;
         this.numeroLibreta = numeroLibreta;
+    }
+
+    public Estudiante(String nombre, String apellido, int edad, String genero, int dni, String ciudad, int numeroLibreta, List<EstudianteCarrera> estudianteCarreras) {
+        this(nombre, apellido, edad, genero, dni, ciudad, numeroLibreta);
+        this.estudianteCarreras = estudianteCarreras;
     }
 
     public String getNombre() {
@@ -90,6 +100,14 @@ public class Estudiante {
         this.numeroLibreta = numeroLibreta;
     }
 
+    public List<EstudianteCarrera> getEstudianteCarreras() {
+        return estudianteCarreras;
+    }
+
+    public void setEstudianteCarreras(List<EstudianteCarrera> estudianteCarreras) {
+        this.estudianteCarreras = estudianteCarreras;
+    }
+
     @Override
     public String toString() {
         return "Estudiante{" +
@@ -100,6 +118,7 @@ public class Estudiante {
                 ", dni=" + dni +
                 ", ciudad='" + ciudad + '\'' +
                 ", numeroLibreta=" + numeroLibreta +
+                ", estudianteCarreras=" + estudianteCarreras +
                 '}';
     }
 }
