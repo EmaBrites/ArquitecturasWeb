@@ -1,2 +1,2 @@
-# ArquitecturasWeb
-Entrega de ejercicios inegradores de Aquitecturas Web de TUDAI 2025
+# Trabajo Práctico No. 2: Anotaciones JPA y consultas JPQL
+## Ejercicio Integrador
