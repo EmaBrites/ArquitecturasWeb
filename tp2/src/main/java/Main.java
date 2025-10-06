@@ -38,5 +38,7 @@ public class Main {
 
 
 
+        HelperCSV helperCSV = new HelperCSV();
+        helperCSV.populateDB();
     }
 }
