@@ -1,6 +1,5 @@
 package utils;
 
-import dto.EstudianteDTO;
 import entities.Carrera;
 import entities.Estudiante;
 import entities.EstudianteCarrera;
@@ -15,11 +14,11 @@ import repositories.EstudianteRepository;
 import java.io.FileReader;
 
 public class HelperCSV {
-    public static final String ESTUDIANTES_CSV = "src/main/resources/estudiantes.csv";
+    public static final String CARRERAS = "carreras";
     public static final String CARRERAS_CSV = "src/main/resources/carreras.csv";
     public static final String CARRERA_CSV = "src/main/resources/estudianteCarrera.csv";
     public static final String ESTUDIANTES = "estudiantes";
-    public static final String CARRERAS = "carreras";
+    public static final String ESTUDIANTES_CSV = "src/main/resources/estudiantes.csv";
     public static final String ESTUDIANTE_CARRERA = "estudiante_carrera";
     private Factory factory;
 
