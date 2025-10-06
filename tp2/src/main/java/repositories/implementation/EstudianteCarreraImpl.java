@@ -1,6 +1,8 @@
 package repositories.implementation;
 
 import dto.EstudianteCarreraDTO;
+import entities.Carrera;
+import entities.Estudiante;
 import entities.EstudianteCarrera;
 import factory.MySQLFactory;
 import jakarta.persistence.EntityManager;
@@ -25,9 +27,18 @@ public class EstudianteCarreraImpl implements EstudianteCarreraRepository {
 
     @Override
     public void insert(EstudianteCarrera estudianteCarrera) {
-        em.getTransaction().begin();
-        em.persist(estudianteCarrera);
-        em.getTransaction().commit();
+        try {
+            em.getTransaction().begin();
+            Estudiante estudiante = em.find(Estudiante.class, estudianteCarrera.getEstudiante().getDni());
+            estudianteCarrera.setEstudiante(estudiante);
+            Carrera carrera = em.find(Carrera.class, estudianteCarrera.getCarrera().getId());
+            estudianteCarrera.setCarrera(carrera);
+            em.persist(estudianteCarrera);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw new RuntimeException("Error inserting EstudianteCarrera: " + e.getMessage(), e);
+        }
     }
 
     @Override

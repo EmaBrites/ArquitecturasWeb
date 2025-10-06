@@ -3,6 +3,7 @@ package entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
@@ -10,29 +11,23 @@ public class EstudianteCarrera {
     @Id
     private int id;
     @Column
-    private int idEstudiante;
-    @Column
-    private int idCarrera;
-    @Column
     private int inscripcion;
     @Column
     private int graduacion;
     @Column
     private int antiguedad;
-    @ManyToOne
-    //@JoinColumn(name = "idEstudiante", referencedColumnName = "numeroLibreta")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "idEstudiante", referencedColumnName = "dni")
     private Estudiante estudiante;
-    @ManyToOne
-    //@JoinColumn(name = "idCarrera", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "idCarrera", referencedColumnName = "id")
     private Carrera carrera;
 
     public EstudianteCarrera() {
     }
 
-    public EstudianteCarrera(int id, int idEstudiante, int idCarrera, int inscripcion, int graduacion, int antiguedad, Estudiante estudiante, Carrera carrera) {
+    public EstudianteCarrera(int id, int inscripcion, int graduacion, int antiguedad, Estudiante estudiante, Carrera carrera) {
         this.id = id;
-        this.idEstudiante = idEstudiante;
-        this.idCarrera = idCarrera;
         this.inscripcion = inscripcion;
         this.graduacion = graduacion;
         this.antiguedad = antiguedad;
@@ -46,22 +41,6 @@ public class EstudianteCarrera {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getIdEstudiante() {
-        return idEstudiante;
-    }
-
-    public void setIdEstudiante(int idEstudiante) {
-        this.idEstudiante = idEstudiante;
-    }
-
-    public int getIdCarrera() {
-        return idCarrera;
-    }
-
-    public void setIdCarrera(int idCarrera) {
-        this.idCarrera = idCarrera;
     }
 
     public int getInscripcion() {
@@ -108,8 +87,6 @@ public class EstudianteCarrera {
     public String toString() {
         return "EstudianteCarrera{" +
                 "id=" + id +
-                ", idEstudiante=" + idEstudiante +
-                ", idCarrera=" + idCarrera +
                 ", inscripcion=" + inscripcion +
                 ", graduacion=" + graduacion +
                 ", antiguedad=" + antiguedad +
