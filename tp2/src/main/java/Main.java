@@ -1,4 +1,5 @@
 import dto.EstudianteDTO;
+import dto.ReporteCarreraDTO;
 import entities.Carrera;
 import entities.Estudiante;
 import entities.EstudianteCarrera;
@@ -46,7 +47,9 @@ public class Main {
         List<EstudianteDTO> estudiantes = estudianteRepository.findByGenero(genero);
         estudiantes.forEach(System.out::println);
 
-
+    //3)
+        List<ReporteCarreraDTO> reportes = carreraRepository.reporteCarrera();
+        reportes.forEach(System.out::println);
 
     }
 }

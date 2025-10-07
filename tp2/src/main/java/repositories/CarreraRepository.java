@@ -2,6 +2,7 @@ package repositories;
 
 import dto.CarreraDTO;
 import dto.CarreraInscriptosDTO;
+import dto.ReporteCarreraDTO;
 import entities.Carrera;
 
 import java.util.List;
@@ -18,4 +19,7 @@ public interface CarreraRepository {
     List<CarreraDTO> findAll();
 
     List<CarreraInscriptosDTO> findAllOrderByInscriptosDesc();
+
+    List<ReporteCarreraDTO> reporteCarrera();
+
 }
