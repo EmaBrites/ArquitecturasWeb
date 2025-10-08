@@ -8,8 +8,6 @@ import factory.MySQLFactory;
 import jakarta.persistence.EntityManager;
 import repositories.CarreraRepository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class CarreraImpl implements CarreraRepository {
@@ -75,67 +73,33 @@ public class CarreraImpl implements CarreraRepository {
 
     @Override
     public List<ReporteCarreraDTO> reporteCarrera() {
-        // 1️⃣ Traemos los inscriptos
-        List<ReporteCarreraDTO> inscriptos = em.createQuery("""
-        SELECT new dto.ReporteCarreraDTO(
-            c.id,
-            c.nombre,
-            ec.inscripcion,
-            COUNT(ec.estudiante),
-            0L
-        )
-        FROM EstudianteCarrera ec
-        JOIN ec.carrera c
-        GROUP BY c.id, c.nombre, ec.inscripcion
-    """, ReporteCarreraDTO.class).getResultList();
+        String nativeQuery = """
+                    SELECT
+                        c.id AS carreraId,
+                        c.nombre AS nombreCarrera,
+                        t.anio AS anio,
+                        SUM(CASE WHEN t.tipo = 'INSCRIPCION' THEN 1 ELSE 0 END) AS inscriptos,
+                        SUM(CASE WHEN t.tipo = 'EGRESO' THEN 1 ELSE 0 END) AS egresados
+                    FROM (
+                        SELECT ec.idCarrera, ec.inscripcion AS anio, 'INSCRIPCION' AS tipo FROM EstudianteCarrera ec
+                        UNION ALL
+                        SELECT ec.idCarrera, ec.graduacion AS anio, 'EGRESO' AS tipo 
+                        FROM EstudianteCarrera ec 
+                        WHERE ec.graduacion IS NOT NULL AND ec.graduacion > 0
+                    ) t
+                    JOIN Carrera c ON t.idCarrera = c.id
+                    GROUP BY c.id, c.nombre, t.anio
+                    ORDER BY c.nombre ASC, t.anio ASC
+                """;
 
-        // 2️⃣ Traemos los egresados
-        List<ReporteCarreraDTO> egresados = em.createQuery("""
-        SELECT new dto.ReporteCarreraDTO(
-            c.id,
-            c.nombre,
-            ec.graduacion,
-            0L,
-            COUNT(ec.estudiante)
-        )
-        FROM EstudianteCarrera ec
-        JOIN ec.carrera c
-        WHERE ec.graduacion IS NOT NULL
-        GROUP BY c.id, c.nombre, ec.graduacion
-    """, ReporteCarreraDTO.class).getResultList();
-
-        // 3️⃣ Mapeamos carrera → (año → DTO)
-        Map<Long, Map<Integer, ReporteCarreraDTO>> carreras = new HashMap<>();
-
-        // Agregamos inscriptos
-        for (ReporteCarreraDTO r : inscriptos) {
-            carreras
-                    .computeIfAbsent(r.getCarreraId(), id -> new HashMap<>())
-                    .put(r.getAnio(), r);
-        }
-
-        // Sumamos egresados
-        for (ReporteCarreraDTO r : egresados) {
-            carreras
-                    .computeIfAbsent(r.getCarreraId(), id -> new HashMap<>())
-                    .merge(
-                            r.getAnio(),
-                            r,
-                            (base, nuevo) -> {
-                                base.setCantidadEgresados(base.getCantidadEgresados() + nuevo.getCantidadEgresados());
-                                return base;
-                            }
-                    );
-        }
-
-        // 4️⃣ Convertimos a lista ordenada
-        return carreras.values().stream()
-                .flatMap(m -> m.values().stream())
-                .sorted(Comparator
-                        .comparing(ReporteCarreraDTO::getNombreCarrera, String.CASE_INSENSITIVE_ORDER)
-                        .thenComparing(ReporteCarreraDTO::getAnio))
+        List<Object[]> resultados = em.createNativeQuery(nativeQuery).getResultList();
+        return resultados.stream()
+                .map(row -> new ReporteCarreraDTO(
+                        (String) row[1],                // Nombre Carrera
+                        ((Number) row[2]).intValue(),   // Año
+                        ((Number) row[3]).longValue(),  // Inscriptos
+                        ((Number) row[4]).longValue()   // Egresados
+                ))
                 .toList();
     }
-    rbr-qpbe-sde
-
 }
