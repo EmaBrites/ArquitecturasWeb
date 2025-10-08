@@ -22,10 +22,14 @@ public class Main {
         //System.out.println(estudianteRepository.findAll());
         //System.out.println(carreraRepository.findAll());
         //System.out.println(estudianteCarreraRepository.findAll());
+
+        //A) dar de alta un estudiante
         Estudiante estudiante = new Estudiante("Josefa", "Rodriguez", 98, "Female", 6397408, "La Plata", 123456);
         estudianteRepository.insert(estudiante);
         Carrera carrera = new Carrera();
         carrera.setId(1);
+
+        //B) matricular un estudiante en una carrera
         estudianteCarreraRepository.insert(new EstudianteCarrera(103, 2019, 2022, 3, estudiante, carrera));
         carrera.setId(3);
         estudianteCarreraRepository.insert(new EstudianteCarrera(104, 2018, 2023, 5, estudiante, carrera));
@@ -33,26 +37,31 @@ public class Main {
         System.out.println(estudianteCarreraRepository.findById(104));
 
         // C) Recuperar todos los estudiantes ordenados por apellido
+        System.out.println("\n\n-----------Ejercicio 2-C-----------");
         estudianteRepository.findAllOrderByApellidoAsc().forEach(System.out::println);
 
-        // F) System.out.println("=== Carreras ordenadas por cantidad de inscriptos ===");
-        carreraRepository.findAllOrderByInscriptosDesc().forEach(System.out::println);
-
         //D) Recuperar un estudiante, en base a su número de libreta universitaria.
+        System.out.println("\n\n-----------Ejercicio 2-D-----------");
         EstudianteDTO estudianteLibreta = estudianteRepository.findByLibretaUni(72976);
         System.out.println(estudianteLibreta.toString());
 
         //E) Recuperar todos los estudiantes, en base a su género.
+        System.out.println("\n\n-----------Ejercicio 2-E-----------");
         String genero = "male";
         List<EstudianteDTO> estudiantes = estudianteRepository.findByGenero(genero);
         estudiantes.forEach(System.out::println);
 
+        // F) System.out.println("=== Carreras ordenadas por cantidad de inscriptos ===");
+        System.out.println("\n\n-----------Ejercicio 2-F-----------");
+        carreraRepository.findAllOrderByInscriptosDesc().forEach(System.out::println);
+
         //G recuperar los estudiantes de una determinada carrera, filtrado por ciudad de residencia.
         List<EstudianteDTO> estudiantesFiltrados = estudianteRepository.findByCarreraYCiudad("TUDAI","Rauch");
-        System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+        System.out.println("\n\n-----------Ejercicio 2-G-----------");
         estudiantesFiltrados.forEach(System.out::println);
 
         //3)
+        System.out.println("\n\n-----------Ejercicio 3-----------");
         List<ReporteCarreraDTO> reportes = carreraRepository.reporteCarrera();
         reportes.forEach(System.out::println);
         System.out.println("--- Reporte Finalizado. Total de filas: " + reportes.size() + " ---");
