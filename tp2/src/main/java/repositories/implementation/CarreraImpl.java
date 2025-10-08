@@ -1,6 +1,7 @@
 package repositories.implementation;
 
 import dto.CarreraDTO;
+import dto.CarreraInscriptosDTO;
 import entities.Carrera;
 import factory.MySQLFactory;
 import jakarta.persistence.EntityManager;
@@ -56,5 +57,17 @@ public class CarreraImpl implements CarreraRepository {
     public List<CarreraDTO> findAll() {
         List<Carrera> carreras = em.createQuery("FROM Carrera", Carrera.class).getResultList();
         return carreras.stream().map(CarreraDTO::new).toList();
+    }
+
+
+    @Override
+    public List<CarreraInscriptosDTO> findAllOrderByInscriptosDesc() {
+        return em.createQuery(
+                "SELECT new dto.CarreraInscriptosDTO(c.nombre, COUNT(ec)) " +
+                        "FROM EstudianteCarrera ec JOIN ec.carrera c " +
+                        "GROUP BY c.nombre " +
+                        "ORDER BY COUNT(ec) DESC",
+                CarreraInscriptosDTO.class
+        ).getResultList();
     }
 }

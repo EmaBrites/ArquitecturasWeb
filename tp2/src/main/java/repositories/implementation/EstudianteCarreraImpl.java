@@ -68,4 +68,6 @@ public class EstudianteCarreraImpl implements EstudianteCarreraRepository {
         List<EstudianteCarrera> estudianteCarreraList = em.createQuery("FROM EstudianteCarrera", EstudianteCarrera.class).getResultList();
         return estudianteCarreraList.stream().map(EstudianteCarreraDTO::new).toList();
     }
+
+
 }

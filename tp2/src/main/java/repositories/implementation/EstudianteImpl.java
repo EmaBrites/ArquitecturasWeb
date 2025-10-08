@@ -95,4 +95,17 @@ public class EstudianteImpl implements EstudianteRepository {
         return dtos;
     }
 
+
+    @Override
+    public List<EstudianteDTO> findAllOrderByApellidoAsc() {
+        List<Estudiante> estudiantes = em.createQuery(
+                "SELECT e FROM Estudiante e ORDER BY e.apellido ASC, e.nombre ASC",
+                Estudiante.class
+        ).getResultList();
+
+        return estudiantes.stream()
+                .map(EstudianteDTO::new)
+                .toList();
+    }
+
 }
