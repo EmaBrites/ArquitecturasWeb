@@ -13,7 +13,6 @@ public class ReporteCarreraDTO {
         this.cantidadEgresados = cantidadEgresados;
     }
 
-    // Getters y toString()
     public String getNombreCarrera() {
         return nombreCarrera;
     }
@@ -32,7 +31,9 @@ public class ReporteCarreraDTO {
 
     @Override
     public String toString() {
-        return String.format("Carrera: %-25s | Año: %d | Inscriptos: %-3d | Egresados: %-3d",
-                nombreCarrera, anio, cantidadInscriptos, cantidadEgresados);
+        return String.format(
+                "| %-30s | Año: %-4d | Inscriptos: %-5d | Egresados: %-5d |",
+                nombreCarrera, anio, cantidadInscriptos, cantidadEgresados
+        );
     }
 }

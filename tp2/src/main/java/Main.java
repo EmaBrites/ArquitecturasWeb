@@ -47,9 +47,9 @@ public class Main {
         List<EstudianteDTO> estudiantes = estudianteRepository.findByGenero(genero);
         estudiantes.forEach(System.out::println);
 
-    //3)
+        //3)
         List<ReporteCarreraDTO> reportes = carreraRepository.reporteCarrera();
         reportes.forEach(System.out::println);
-
+        System.out.println("--- Reporte Finalizado. Total de filas: " + reportes.size() + " ---");
     }
 }
