@@ -47,6 +47,11 @@ public class Main {
         List<EstudianteDTO> estudiantes = estudianteRepository.findByGenero(genero);
         estudiantes.forEach(System.out::println);
 
+        //G recuperar los estudiantes de una determinada carrera, filtrado por ciudad de residencia.
+        List<EstudianteDTO> estudiantesFiltrados = estudianteRepository.findByCarreraYCiudad("TUDAI","Rauch");
+        System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+        estudiantesFiltrados.forEach(System.out::println);
+
         //3)
         List<ReporteCarreraDTO> reportes = carreraRepository.reporteCarrera();
         reportes.forEach(System.out::println);

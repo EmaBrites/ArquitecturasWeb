@@ -22,4 +22,6 @@ public interface EstudianteRepository {
 
     List<EstudianteDTO> findByGenero(String genero);
 
+    List<EstudianteDTO> findByCarreraYCiudad(String carrera, String ciudad);
+
 }
