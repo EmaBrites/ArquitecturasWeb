@@ -1,3 +1,4 @@
+import dto.EstudianteDTO;
 import entities.Carrera;
 import entities.Estudiante;
 import entities.EstudianteCarrera;
@@ -6,6 +7,8 @@ import repositories.CarreraRepository;
 import repositories.EstudianteCarreraRepository;
 import repositories.EstudianteRepository;
 import utils.HelperCSV;
+
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -35,10 +38,15 @@ public class Main {
         carreraRepository.findAllOrderByInscriptosDesc().forEach(System.out::println);
 
         //D) Recuperar un estudiante, en base a su número de libreta universitaria.
-        estudianteRepository.findByLibretaUni(72976);
+        EstudianteDTO estudianteLibreta = estudianteRepository.findByLibretaUni(72976);
+        System.out.println(estudianteLibreta.toString());
 
         //E) Recuperar todos los estudiantes, en base a su género.
-        estudianteRepository.findByGenero("male");
+        String genero = "male";
+        List<EstudianteDTO> estudiantes = estudianteRepository.findByGenero(genero);
+        estudiantes.forEach(System.out::println);
+
+
 
     }
 }
