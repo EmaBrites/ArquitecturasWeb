@@ -100,4 +100,20 @@ public class EstudianteImpl implements EstudianteRepository {
                 .toList();
     }
 
+    @Override
+    public List<EstudianteDTO> findByCarreraYCiudad(String carrera, String ciudad){
+        List<Estudiante> estudiantes = em.createQuery(
+                "SELECT e FROM Estudiante e WHERE "+
+                        "e.ciudad = :ciudad AND " +
+                        "e.dni IN(" +
+                        "SELECT ec.estudiante.id FROM EstudianteCarrera ec WHERE ec.carrera.id = (" +
+                        "SELECT c.id FROM Carrera c WHERE c.nombre = :carrera))", Estudiante.class)
+                .setParameter("carrera",carrera)
+                .setParameter("ciudad",ciudad)
+                .getResultList();
+        return estudiantes.stream()
+                .map(EstudianteDTO::new)
+                .toList();
+    }
+
 }
