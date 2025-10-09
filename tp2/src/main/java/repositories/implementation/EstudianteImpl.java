@@ -103,11 +103,13 @@ public class EstudianteImpl implements EstudianteRepository {
     @Override
     public List<EstudianteDTO> findByCarreraYCiudad(String carrera, String ciudad){
         List<Estudiante> estudiantes = em.createQuery(
-                "SELECT e FROM Estudiante e WHERE "+
-                        "e.ciudad = :ciudad AND " +
-                        "e.dni IN(" +
-                        "SELECT ec.estudiante.id FROM EstudianteCarrera ec WHERE ec.carrera.id = (" +
-                        "SELECT c.id FROM Carrera c WHERE c.nombre = :carrera))", Estudiante.class)
+                "SELECT DISTINCT e " +
+                        "FROM Estudiante e " +
+                        "INNER JOIN EstudianteCarrera ec ON ec.estudiante.id = e.id " +
+                        "INNER JOIN Carrera c ON c.id = ec.carrera.id " +
+                        "WHERE e.ciudad = :ciudad " +
+                        "AND c.nombre = :carrera",
+                Estudiante.class)
                 .setParameter("carrera",carrera)
                 .setParameter("ciudad",ciudad)
                 .getResultList();
