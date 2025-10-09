@@ -105,7 +105,7 @@ public class EstudianteImpl implements EstudianteRepository {
         List<Estudiante> estudiantes = em.createQuery(
                 "SELECT DISTINCT e " +
                         "FROM Estudiante e " +
-                        "INNER JOIN EstudianteCarrera ec ON ec.estudiante.id = e.id " +
+                        "INNER JOIN EstudianteCarrera ec ON ec.estudiante.dni = e.dni " +
                         "INNER JOIN Carrera c ON c.id = ec.carrera.id " +
                         "WHERE e.ciudad = :ciudad " +
                         "AND c.nombre = :carrera",
