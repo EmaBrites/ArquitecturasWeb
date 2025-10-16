@@ -27,4 +27,10 @@ public class EstudianteController {
         return estudianteService.crearEstudiante(dto);
     }
 
+    // Recuperar todos los estudiantes ordenados por apellido
+    @GetMapping("/ordenados")
+    public List<Estudiante> findAllOrdenadosPorApellido() {
+        return estudianteService.findAllOrdenadosPorApellido();
+    }
+
 }

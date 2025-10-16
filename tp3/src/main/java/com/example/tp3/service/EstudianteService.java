@@ -4,6 +4,7 @@ import com.example.tp3.dto.EstudianteDTO;
 import com.example.tp3.model.Estudiante;
 import com.example.tp3.repository.EstudianteRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,5 +37,10 @@ public class EstudianteService {
         );
 
         return estudianteRepository.save(estudiante);
+    }
+
+    @Transactional
+    public List<Estudiante> findAllOrdenadosPorApellido() {
+        return estudianteRepository.findAll(Sort.by("apellido"));
     }
 }
