@@ -31,9 +31,9 @@ public class EstudianteCarreraService {
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
 
 
-
-        Carrera carrera = carreraRepository.findById((long) dto.getIdCarrera())
+        Carrera carrera = carreraRepository.findById(dto.getIdCarrera())
                 .orElseThrow(() -> new RuntimeException("Carrera no encontrada"));
+
 
         EstudianteCarrera nueva = EstudianteCarrera.builder()
                 .inscripcion(dto.getInscripcion())
