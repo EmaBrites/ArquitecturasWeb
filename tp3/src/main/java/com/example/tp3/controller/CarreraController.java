@@ -1,6 +1,7 @@
 package com.example.tp3.controller;
 
 import com.example.tp3.dto.CarreraInscriptosDTO;
+import com.example.tp3.dto.ReporteCarreraDTO;
 import com.example.tp3.repository.CarreraRepository;
 import com.example.tp3.service.CarreraService;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,11 @@ public class CarreraController {
     @GetMapping("/inscriptos")
     public List<CarreraInscriptosDTO> findCarrerasConInscriptosOrdenadas() {
         return carreraService.findCarrerasConInscriptosOrdenadas();
+    }
+
+    @GetMapping("/reporte")
+    public List<ReporteCarreraDTO> getReporteCarreras() {
+        return carreraService.reporteCarrera();
     }
 
 }
