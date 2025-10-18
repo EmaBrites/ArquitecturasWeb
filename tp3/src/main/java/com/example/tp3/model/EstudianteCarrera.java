@@ -19,6 +19,7 @@ public class EstudianteCarrera {
     @JoinColumn(name = "idEstudiante" , referencedColumnName = "dni")
     private Estudiante estudiante;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "idCarerra" , referencedColumnName = "id")
+    @JoinColumn(name = "id_carrera", referencedColumnName = "id")
     private Carrera carrera;
+
 }
