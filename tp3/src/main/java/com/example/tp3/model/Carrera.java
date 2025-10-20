@@ -4,13 +4,19 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "carrera")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Carrera {
+
     @Id
+    @Column(name = "id", nullable = false, unique = true)
     private int id;
+
+    @Column(name = "nombre", nullable = false)
     private String nombre;
+
+    @Column(name = "duracion", nullable = false)
     private int duracion;
 }

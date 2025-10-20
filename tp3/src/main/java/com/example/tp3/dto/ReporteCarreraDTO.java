@@ -8,7 +8,7 @@ import lombok.ToString;
 @Data
 @AllArgsConstructor
 @Builder
-@ToString
+
 
 public class ReporteCarreraDTO {
     private String nombreCarrera;

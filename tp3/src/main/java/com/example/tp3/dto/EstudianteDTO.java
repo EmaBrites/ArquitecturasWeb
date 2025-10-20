@@ -6,7 +6,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @Builder
-@ToString
+
 
 public class EstudianteDTO implements Serializable {
     private final String nombre;

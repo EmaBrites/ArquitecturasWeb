@@ -33,11 +33,11 @@ public class CSVLoaderService {
     private EstudianteCarreraRepository estudianteCarreraRepository;
 
     public void populateDB() {
-        System.out.println("📥 Insertando datos en la base...");
+        System.out.println(" Insertando datos en la base...");
         processEstudiantes();
         processCarreras();
         processEstudianteCarrera();
-        System.out.println("✅ Datos insertados correctamente.");
+        System.out.println(" Datos insertados correctamente.");
     }
 
     private void processEstudiantes() {
@@ -55,7 +55,7 @@ public class CSVLoaderService {
                     estudiante.setNumeroLibreta(Integer.parseInt(row.get("LU")));
                     estudianteRepository.save(estudiante);
                 } catch (RuntimeException e) {
-                    System.out.println("❌ Error al persistir estudiante: " + e.getMessage());
+                    System.out.println(" Error al persistir estudiante: " + e.getMessage());
                     System.out.println("Record: " + row.toString());
                 }
             }
@@ -75,7 +75,7 @@ public class CSVLoaderService {
                     carrera.setDuracion(Integer.parseInt(row.get("duracion")));
                     carreraRepository.save(carrera);
                 } catch (RuntimeException e) {
-                    System.out.println("❌ Error al persistir carrera: " + e.getMessage());
+                    System.out.println(" Error al persistir carrera: " + e.getMessage());
                     System.out.println("Record: " + row.toString());
                 }
             }
@@ -106,7 +106,7 @@ public class CSVLoaderService {
 
                     estudianteCarreraRepository.save(ec);
                 } catch (RuntimeException e) {
-                    System.out.println("❌ Error al persistir estudiante_carrera: " + e.getMessage());
+                    System.out.println(" Error al persistir estudiante_carrera: " + e.getMessage());
                     System.out.println("Record: " + row.toString());
                 }
             }

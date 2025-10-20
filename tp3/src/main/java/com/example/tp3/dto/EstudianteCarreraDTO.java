@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @Builder
-@ToString
+
 
 
 public class EstudianteCarreraDTO implements Serializable {
