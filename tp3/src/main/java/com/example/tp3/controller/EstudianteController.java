@@ -22,7 +22,7 @@ public class EstudianteController {
         return estudianteService.findAll();
     }
     //Dar de alta un estudiante
-    @PostMapping("/alta")
+    @PostMapping
     public Estudiante crearEstudiante(@RequestBody EstudianteDTO dto) {
         return estudianteService.crearEstudiante(dto);
     }

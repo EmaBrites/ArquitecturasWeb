@@ -1,0 +1,75 @@
+{
+	"info": {
+		"_postman_id": "3b5a2965-6074-4643-863d-728998d93292",
+		"name": "Integrador_3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49407031",
+		"_collection_link": "https://joviviant-4399005.postman.co/workspace/Joel-Emanuel-Viviant's-Workspac~e1ff5c2c-2ba0-4cab-8ffd-2f41b557d541/collection/49407031-3b5a2965-6074-4643-863d-728998d93292?action=share&source=collection_link&creator=49407031"
+	},
+	"item": [
+		{
+			"name": "Ejercicio_1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"dni\": 23456789,\r\n        \"nombre\": \"Ana\",\r\n        \"apellido\": \"Fernandez\",\r\n        \"edad\": 49,\r\n        \"genero\": \"Female\",\r\n        \"ciudad\": \"Samal\",\r\n        \"numeroLibreta\": 34567\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/estudiante",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"estudiante"
+					]
+				},
+				"description": "Dar de alta un estudiante"
+			},
+			"response": []
+		},
+		{
+			"name": "Ejercicio_2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"inscripcion\": 2025,\r\n  \"graduacion\": 0,\r\n  \"antiguedad\": 1,\r\n  \"idCarrera\": 1,\r\n  \"libretaEstudiante\": 72976\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+                    "url": {
+                        "raw": "localhost:8080/estudianteCarrera/inscribir",
+                        "host": [
+                            "localhost"
+                        ],
+                        "port": "8080",
+                        "path": [
+                            "estudianteCarrera",
+                            "inscribir"
+                        ]
+                    }
+				"description": "Dar de alta un estudiante"
+				},
+			},
+			"response": []
+		}
+	]
+}

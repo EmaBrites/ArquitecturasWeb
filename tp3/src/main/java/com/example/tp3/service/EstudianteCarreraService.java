@@ -26,15 +26,10 @@ public class EstudianteCarreraService {
     private EstudianteCarreraRepository estudianteCarreraRepository;
 
     public EstudianteCarreraDTO inscribirEnCarrera(EstudianteCarreraDTO dto) {
-        // Buscar estudiante y carrera según los datos que vienen
         Estudiante estudiante = estudianteRepository.findByNumeroLibreta(dto.getLibretaEstudiante())
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
-
-
         Carrera carrera = carreraRepository.findById(dto.getIdCarrera())
                 .orElseThrow(() -> new RuntimeException("Carrera no encontrada"));
-
-
         EstudianteCarrera nueva = EstudianteCarrera.builder()
                 .inscripcion(dto.getInscripcion())
                 .graduacion(dto.getGraduacion())
@@ -42,11 +37,7 @@ public class EstudianteCarreraService {
                 .estudiante(estudiante)
                 .carrera(carrera)
                 .build();
-
-
         EstudianteCarrera guardado = estudianteCarreraRepository.save(nueva);
-
-        // Devolver el DTO completo con datos del estudiante y carrera
         return new EstudianteCarreraDTO(
                 guardado.getId(),
                 guardado.getInscripcion(),

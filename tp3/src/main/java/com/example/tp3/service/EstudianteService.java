@@ -24,19 +24,16 @@ public class EstudianteService {
     }
 
     @Transactional
-
     public Estudiante crearEstudiante(EstudianteDTO dto) {
-        Estudiante estudiante = new Estudiante(
-                dto.getNombre(),
-                dto.getApellido(),
-                dto.getEdad(),
-                dto.getGenero(),
-                dto.getDni(),
-                dto.getCiudad(),
-                dto.getNumeroLibreta()
-        );
-
-        return estudianteRepository.save(estudiante);
+        return Estudiante.builder()
+                .dni(dto.getDni())
+                .nombre(dto.getNombre())
+                .apellido(dto.getApellido())
+                .edad(dto.getEdad())
+                .genero(dto.getGenero())
+                .ciudad(dto.getCiudad())
+                .numeroLibreta(dto.getNumeroLibreta())
+                .build();
     }
 
     @Transactional

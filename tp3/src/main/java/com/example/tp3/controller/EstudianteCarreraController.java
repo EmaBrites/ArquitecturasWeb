@@ -13,7 +13,7 @@ public class EstudianteCarreraController {
 
     @Autowired
     private EstudianteCarreraService estudianteCarreraService;
-    @GetMapping("")
+    @GetMapping
     public List<EstudianteCarreraDTO> getAll() {
         return estudianteCarreraService.getAll();
     }
