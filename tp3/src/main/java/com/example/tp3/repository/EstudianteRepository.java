@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface EstudianteRepository extends JpaRepository<Estudiante, Integer> {
-    Optional<Estudiante> findByNumeroLibreta(int numeroLibreta);
 
     @Query("SELECT DISTINCT e " +
             "FROM Estudiante e " +
@@ -20,4 +19,10 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Integer>
                     "WHERE e.ciudad = :ciudad " +
                     "AND c.nombre = :carrera")
     List<Estudiante> findByCarreraYCiudad(String carrera, String ciudad);
+
+    @Query(value = "SELECT e FROM Estudiante e WHERE e.numeroLibreta = :nroLibreta")
+    Estudiante findByLibretaUni(int nroLibreta);
+
+    @Query(value = "SELECT e FROM Estudiante e WHERE e.genero = :genero")
+    List<Estudiante> findByGenero(String genero);
 }

@@ -26,7 +26,7 @@ public class EstudianteCarreraService {
     private EstudianteCarreraRepository estudianteCarreraRepository;
 
     public EstudianteCarreraDTO inscribirEnCarrera(EstudianteCarreraDTO dto) {
-        Estudiante estudiante = estudianteRepository.findByNumeroLibreta(dto.getLibretaEstudiante())
+        Estudiante estudiante = estudianteRepository.findById(dto.getIdEstudiante())
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
         Carrera carrera = carreraRepository.findById(dto.getIdCarrera())
                 .orElseThrow(() -> new RuntimeException("Carrera no encontrada"));
