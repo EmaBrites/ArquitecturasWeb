@@ -33,4 +33,8 @@ public class EstudianteController {
         return estudianteService.findAllOrdenadosPorApellido();
     }
 
+    @GetMapping("/filtrados")
+    public List<EstudianteDTO> findByCarreraYCiudad(@RequestParam String carrera, @RequestParam String ciudad){
+        return estudianteService.findByCarreraYCiudad(carrera,ciudad);
+    }
 }
