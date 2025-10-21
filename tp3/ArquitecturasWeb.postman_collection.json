@@ -1,0 +1,229 @@
+{
+	"info": {
+		"_postman_id": "8c50b94c-545c-471e-ad82-77a386a49923",
+		"name": "ArquitecturasWeb",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24291726",
+		"_collection_link": "https://galactic-station-193715.postman.co/workspace/Matias~1d81702f-6d99-44d7-9234-1f83998e0b34/collection/24291726-8c50b94c-545c-471e-ad82-77a386a49923?action=share&source=collection_link&creator=24291726"
+	},
+	"item": [
+		{
+			"name": "Estudiante",
+			"item": [
+				{
+					"name": "byCarreraYCiudad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/estudiante/filtrados?carrera=Abogacia&ciudad=Dashtobod",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estudiante",
+								"filtrados"
+							],
+							"query": [
+								{
+									"key": "carrera",
+									"value": "Abogacia"
+								},
+								{
+									"key": "ciudad",
+									"value": "Dashtobod"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/estudiante",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estudiante"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all - byGenero",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/estudiante/genero/male",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estudiante",
+								"genero",
+								"male"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "byLibreta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/estudiante/numero-libreta/247817",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estudiante",
+								"numero-libreta",
+								"247817"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all - byApellido",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/estudiante/ordenados",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estudiante",
+								"ordenados"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "estudiante",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"nombre\": \"Matias\",\r\n        \"apellido\": \"Schmitz\",\r\n        \"edad\": 32,\r\n        \"genero\": \"Masculino\",\r\n        \"numeroLibreta\": 247817,\r\n        \"ciudad\": \"Olavarria\",\r\n        \"dni\": 37032462\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/estudiante",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estudiante"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Carrera",
+			"item": [
+				{
+					"name": "reporte",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/carreras/reporte",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"carreras",
+								"reporte"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all - con inscriptos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/carreras/inscriptos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"carreras",
+								"inscriptos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "estudiante",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"inscripcion\": 2013,\r\n    \"graduacion\": 0,\r\n    \"antiguedad\": 12,\r\n    \"idCarrera\": 2,\r\n    \"idEstudiante\": 44782708,\r\n    \"nombreEstudiante\":\"Ham\",\r\n    \"nombreCarrera\": \"Abogacia\",\r\n    \"apellidoEstudiante\":\"Airy\",\r\n    \"generoEstudiante\": \"Male\",\r\n    \"libretaEstudiante\": 90958\r\n\r\n\r\n\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/estudianteCarrera/inscribir",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estudianteCarrera",
+								"inscribir"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
