@@ -17,6 +17,7 @@
     <version>1.0.0</version>
     <name>electric-scooter</name>
     <description>Proyecto trabajo práctico especial microservicios</description>
+    <packaging>pom</packaging>
 
     <modules>
         <module>admin-service</module>
