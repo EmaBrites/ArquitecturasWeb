@@ -2,15 +2,15 @@ package com.exa.userservice.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Data
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private integer id;
+    private int id;
 
     @Column(nullable = false)
     private String firstName;
@@ -27,6 +27,11 @@ public class User {
     @Column
     private String phone;
 
-    @Column(nullable = false)
-    private String createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
