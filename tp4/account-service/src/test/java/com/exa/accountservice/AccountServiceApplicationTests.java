@@ -1,10 +1,10 @@
-package com.exa.paymentservice;
+package com.exa.accountservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PaymentServiceApplicationTests {
+class AccountServiceApplicationTests {
 
     @Test
     void contextLoads() {
