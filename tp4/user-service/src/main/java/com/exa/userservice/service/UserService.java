@@ -22,7 +22,7 @@ public class UserService {
     public UserDTO createUser(CreateUserDTO dto) {
         User user = new User();
         BeanUtils.copyProperties(dto, user);
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt((LocalDateTime.now()));
         User saved = userRepository.save(user);
         UserDTO result = new UserDTO();
         BeanUtils.copyProperties(saved, result);
