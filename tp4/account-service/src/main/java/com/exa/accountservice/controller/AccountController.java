@@ -1,8 +1,10 @@
 package com.exa.accountservice.controller;
 
 import com.exa.accountservice.dto.AccountDTO;
+import com.exa.accountservice.dto.ApiErrorDTO;
 import com.exa.accountservice.dto.CreateAccountDTO;
 import com.exa.accountservice.dto.UpdateAccountDTO;
+import com.exa.accountservice.enums.AccountStateEnum;
 import com.exa.accountservice.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -52,15 +55,11 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Account found",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
             @ApiResponse(responseCode = "404", description = "Account not found",
-                    content = @Content)
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))),
     })
-    public ResponseEntity<AccountDTO> getAccountById(@PathVariable Integer id) {
-        try {
-            AccountDTO accountDTO = accountService.getAccountById(id);
-            return ResponseEntity.ok(accountDTO);
-        } catch (AccountNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<AccountDTO> getAccountById(@PathVariable Integer id) throws AccountNotFoundException {
+        AccountDTO accountDTO = accountService.getAccountById(id);
+        return ResponseEntity.ok(accountDTO);
     }
 
     @PutMapping("/{id}")
@@ -68,16 +67,14 @@ public class AccountController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account updated successfully",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))),
             @ApiResponse(responseCode = "404", description = "Account not found",
-                    content = @Content)
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))),
     })
-    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Integer id, @RequestBody UpdateAccountDTO updateAccountDTO) {
-        try {
-            AccountDTO updatedAccount = accountService.updateAccount(id, updateAccountDTO);
-            return ResponseEntity.ok(updatedAccount);
-        } catch (AccountNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Integer id, @RequestBody UpdateAccountDTO updateAccountDTO) throws AccountNotFoundException {
+        AccountDTO updatedAccount = accountService.updateAccount(id, updateAccountDTO);
+        return ResponseEntity.ok(updatedAccount);
     }
 
     @DeleteMapping("/{id}")
@@ -86,14 +83,24 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Account deleted successfully",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
             @ApiResponse(responseCode = "404", description = "Account not found",
-                    content = @Content)
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))),
     })
-    public ResponseEntity<Boolean> deleteAccount(@PathVariable Integer id) {
-        try {
-            boolean deleted = accountService.deleteAccount(id);
-            return ResponseEntity.ok(deleted);
-        } catch (AccountNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Boolean> deleteAccount(@PathVariable Integer id) throws AccountNotFoundException {
+        boolean deleted = accountService.deleteAccount(id);
+        return ResponseEntity.ok(deleted);
+
+    }
+
+    @PutMapping("/{id}/state")
+    @Operation(summary = "Update account state (activate/deactivate)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Account state updated successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Account not found",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))),
+    })
+    public ResponseEntity<AccountDTO> updateAccountState(@PathVariable Integer id, @RequestParam AccountStateEnum accountState) throws AccountNotFoundException {
+        AccountDTO updatedAccount = accountService.updateAccountState(id, accountState);
+        return ResponseEntity.ok(updatedAccount);
     }
 }

@@ -26,16 +26,18 @@ public class AccountTransactionService {
         this.accountService = accountService;
     }
 
-    public AccountTransactionDTO topupAccount(TransactionDTO transactionDTO) throws AccountNotFoundException, IllegalArgumentException {
+    public AccountTransactionDTO topupAccount(TransactionDTO transactionDTO)
+            throws AccountNotFoundException, IllegalArgumentException, IllegalStateException {
         validateAmount(transactionDTO.amount());
-        accountService.updateAccountBalance(transactionDTO.accountId(), transactionDTO.amount());
-        return recordTransaction(transactionDTO.accountId(), TransactionTypeEnum.DEPOSIT, transactionDTO.amount());
+        AccountDTO accountDTO = accountService.updateAccountBalance(transactionDTO.accountId(), transactionDTO.amount());
+        return recordTransaction(accountDTO, transactionDTO.amount(), TransactionTypeEnum.DEPOSIT);
     }
 
-    public AccountTransactionDTO chargeAccount(TransactionDTO transactionDTO) throws AccountNotFoundException, IllegalArgumentException {
+    public AccountTransactionDTO chargeAccount(TransactionDTO transactionDTO)
+            throws AccountNotFoundException, IllegalArgumentException, IllegalStateException {
         validateAmount(transactionDTO.amount());
-        accountService.updateAccountBalance(transactionDTO.accountId(), -transactionDTO.amount());
-        return recordTransaction(transactionDTO.accountId(), TransactionTypeEnum.CHARGE, transactionDTO.amount());
+        AccountDTO accountDTO = accountService.updateAccountBalance(transactionDTO.accountId(), -transactionDTO.amount());
+        return recordTransaction(accountDTO, transactionDTO.amount(), TransactionTypeEnum.CHARGE);
     }
 
     private void validateAmount(double amount) throws IllegalArgumentException {
@@ -44,8 +46,7 @@ public class AccountTransactionService {
         }
     }
 
-    private AccountTransactionDTO recordTransaction(Integer accountId, TransactionTypeEnum type, double amount) throws AccountNotFoundException {
-        AccountDTO accountDTO = accountService.getAccountById(accountId);
+    private AccountTransactionDTO recordTransaction(AccountDTO accountDTO, Double amount, TransactionTypeEnum type) {
         Account account = new Account();
         BeanUtils.copyProperties(accountDTO, account);
         AccountTransaction accountTransaction = new AccountTransaction();
