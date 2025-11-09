@@ -90,7 +90,11 @@ public class TripService {
 
         return tripRepository.save(trip);
     }
+    //US-TRIP-04
 
+    public List<Trip> getTripsFiltered(Long accountId, Long scooterId, LocalDateTime from, LocalDateTime to) {
+        return tripRepository.findFilteredTrips(accountId, scooterId, from, to);
+    }
 
 
     public List<Trip> getTripsByAccount(Long accountId) {
