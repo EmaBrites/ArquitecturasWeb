@@ -1,9 +1,9 @@
 package com.exa.userservice.dto;
 
-import lombok.Value;
+import lombok.Data;
 import java.io.Serializable;
 
-@Value
+@Data
 public class CreateUserDTO implements Serializable {
     String firstName;
     String lastName;
