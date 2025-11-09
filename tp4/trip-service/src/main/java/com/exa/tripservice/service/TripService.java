@@ -16,7 +16,7 @@ import java.util.List;
 public class TripService {
 
     private final TripRepository tripRepository;
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final ExternalServicesClient externalServicesClient;
 
     // 👇 Inyectamos las URLs del properties
     @Value("${microservices.account}")
@@ -62,6 +62,36 @@ public class TripService {
         trip.setPauseTime(null);
         return tripRepository.save(trip);
     }
+    //US-TRIP-03
+    public Trip endTrip(Long tripId, Double endLat, Double endLon, Double kilometers) {
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
+
+        if (!"ACTIVE".equals(trip.getStatus())) {
+            throw new RuntimeException("Solo se pueden finalizar viajes activos");
+        }
+
+        boolean stopValid = externalServicesClient.isStopValid(endLat, endLon);
+        if (!stopValid) {
+            throw new RuntimeException("No estás en una parada válida para finalizar el viaje");
+        }
+
+        trip.setEndLat(endLat);
+        trip.setEndLon(endLon);
+        trip.setEndTime(LocalDateTime.now());
+        trip.setKilometers(kilometers);
+
+        Duration duration = Duration.between(trip.getStartTime(), trip.getEndTime());
+        trip.setDurationMinutes(duration.toMinutes());
+        trip.setStatus("FINISHED");
+        externalServicesClient.setScooterAvailable(trip.getScooterId());
+        double pricePerKm = 30.0; // o configurable desde application.properties
+        externalServicesClient.chargeAccount(trip.getAccountId(), kilometers * pricePerKm);
+
+        return tripRepository.save(trip);
+    }
+
+
 
     public List<Trip> getTripsByAccount(Long accountId) {
         return tripRepository.findByAccountId(accountId);
