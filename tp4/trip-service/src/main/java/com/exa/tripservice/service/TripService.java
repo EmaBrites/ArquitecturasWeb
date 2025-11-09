@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,23 +25,8 @@ public class TripService {
     @Value("${microservices.scooter}")
     private String scooterMsUrl;
 
+    // US-TRIP-01
     public Trip startTrip(Long accountId, Long scooterId, Double startLat, Double startLon) {
-
-        System.out.println("Usando Account MS URL: " + accountMsUrl);
-        System.out.println("Usando Scooter MS URL: " + scooterMsUrl);
-
-        // Por ahora podés simular hasta que existan los endpoints:
-        boolean accountActive = true;
-        double balance = 100.0;
-        boolean scooterAvailable = true;
-
-        if (!accountActive)
-            throw new RuntimeException("Cuenta bloqueada o inactiva");
-        if (balance < 50.0)
-            throw new RuntimeException("Saldo insuficiente");
-        if (!scooterAvailable)
-            throw new RuntimeException("Scooter no disponible");
-
         Trip trip = new Trip();
         trip.setAccountId(accountId);
         trip.setScooterId(scooterId);
@@ -48,7 +34,32 @@ public class TripService {
         trip.setStartLon(startLon);
         trip.setStartTime(LocalDateTime.now());
         trip.setStatus("ACTIVE");
+        return tripRepository.save(trip);
+    }
 
+    // US-TRIP-02
+    public Trip pauseTrip(Long tripId) {
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
+        if (!"ACTIVE".equals(trip.getStatus()))
+            throw new RuntimeException("Solo se pueden pausar viajes activos");
+
+        trip.setPauseTime(LocalDateTime.now());
+        trip.setStatus("PAUSED");
+        trip.setLongPause(false);
+        return tripRepository.save(trip);
+    }
+
+    public Trip resumeTrip(Long tripId) {
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
+        if (!"PAUSED".equals(trip.getStatus()))
+            throw new RuntimeException("Solo se pueden reanudar viajes pausados");
+
+        Duration pauseDuration = Duration.between(trip.getPauseTime(), LocalDateTime.now());
+        if (pauseDuration.toMinutes() > 15) trip.setLongPause(true);
+        trip.setStatus("ACTIVE");
+        trip.setPauseTime(null);
         return tripRepository.save(trip);
     }
 

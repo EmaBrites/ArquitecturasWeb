@@ -27,6 +27,9 @@ public class Trip {
 
     private Double kilometers;
     private Long durationMinutes;
+    private String status; // ACTIVE, PAUSED, FINISHED
 
-    private String status; // ACTIVE, FINISHED, CANCELLED
+    // 👇 nuevos campos
+    private LocalDateTime pauseTime;
+    private Boolean longPause;
 }
