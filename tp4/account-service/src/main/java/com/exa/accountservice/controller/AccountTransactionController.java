@@ -1,6 +1,7 @@
 package com.exa.accountservice.controller;
 
 import com.exa.accountservice.dto.AccountTransactionDTO;
+import com.exa.accountservice.dto.ApiErrorDTO;
 import com.exa.accountservice.dto.TransactionDTO;
 import com.exa.accountservice.service.AccountTransactionService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,34 +33,25 @@ public class AccountTransactionController {
             @ApiResponse(responseCode = "200", description = "Account topped up successfully",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountTransactionDTO.class))),
             @ApiResponse(responseCode = "404", description = "Account not found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid request",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))),
     })
-    public ResponseEntity<AccountTransactionDTO> topupAccount(@RequestBody TransactionDTO transactionDTO) {
-        try {
-            AccountTransactionDTO accountTransactionDTO = accountTransactionService.topupAccount(transactionDTO);
-            return ResponseEntity.ok().body(accountTransactionDTO);
-        } catch (AccountNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<AccountTransactionDTO> topupAccount(@RequestBody TransactionDTO transactionDTO) throws AccountNotFoundException {
+        AccountTransactionDTO accountTransactionDTO = accountTransactionService.topupAccount(transactionDTO);
+        return ResponseEntity.ok().body(accountTransactionDTO);
+
     }
 
     @PostMapping("/charge")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Account topped up successfully",
+            @ApiResponse(responseCode = "200", description = "Account charged successfully",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountTransactionDTO.class))),
             @ApiResponse(responseCode = "404", description = "Account not found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid request",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))),
     })
-    public ResponseEntity<AccountTransactionDTO> chargeAccount(@RequestBody TransactionDTO transactionDTO) {
-        try {
-            AccountTransactionDTO accountTransactionDTO = accountTransactionService.chargeAccount(transactionDTO);
-            return ResponseEntity.ok().body(accountTransactionDTO);
-        } catch (AccountNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<AccountTransactionDTO> chargeAccount(@RequestBody TransactionDTO transactionDTO) throws AccountNotFoundException {
+        AccountTransactionDTO accountTransactionDTO = accountTransactionService.chargeAccount(transactionDTO);
+        return ResponseEntity.ok().body(accountTransactionDTO);
     }
 }
