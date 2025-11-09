@@ -6,7 +6,6 @@ import com.exa.userservice.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.security.auth.login.AccountNotFoundException;
 
 @Service
