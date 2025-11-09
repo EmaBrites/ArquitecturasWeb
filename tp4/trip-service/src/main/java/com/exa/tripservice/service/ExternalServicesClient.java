@@ -20,19 +20,19 @@ public class ExternalServicesClient {
     @Value("${microservices.account}")
     private String accountMsUrl;
 
-    // 🚏 Validar parada
+    //  Validar parada
     public boolean isStopValid(Double lat, Double lon) {
         String url = stopMsUrl + "/stops/validate?lat=" + lat + "&lon=" + lon;
         return restTemplate.getForObject(url, Boolean.class);
     }
 
-    // 🛴 Cambiar scooter a disponible
+    //  Cambiar scooter a disponible
     public void setScooterAvailable(Long scooterId) {
         String url = scooterMsUrl + "/scooters/" + scooterId + "/status?newStatus=AVAILABLE";
         restTemplate.put(url, null);
     }
 
-    // 💰 Descontar crédito
+    //  Descontar crédito
     public void chargeAccount(Long accountId, double amount) {
         String url = accountMsUrl + "/accounts/" + accountId + "/charge?amount=" + amount;
         restTemplate.put(url, null);
