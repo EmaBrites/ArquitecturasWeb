@@ -17,7 +17,7 @@ public class TripService {
     private final TripRepository tripRepository;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // 👇 Inyectamos las URLs del properties
+    //Inyectamos las URLs del properties
     @Value("${microservices.account}")
     private String accountMsUrl;
 
