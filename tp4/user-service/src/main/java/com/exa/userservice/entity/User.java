@@ -3,6 +3,8 @@ package com.exa.userservice.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -34,4 +36,10 @@ public class User {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
+    @ElementCollection
+    @CollectionTable(name = "user_accounts", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "account_id")
+    private List<Integer> accountIds = new ArrayList<>();
+
 }
