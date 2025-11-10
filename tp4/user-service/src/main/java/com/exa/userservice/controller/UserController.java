@@ -101,5 +101,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "Search users by email, phone or name with pagination")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Users retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))), @ApiResponse(responseCode = "204", description = "No users found", content = @Content)})
+    public ResponseEntity<Page<UserDTO>> searchUsers(@RequestParam(required = false) String email, @RequestParam(required = false) String phone, @RequestParam(required = false) String name, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Page<UserDTO> result = userService.searchUsers(email, phone, name, page, size);
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(result);
+    }
 
 }

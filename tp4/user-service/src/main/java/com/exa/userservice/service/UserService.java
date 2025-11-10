@@ -6,6 +6,9 @@ import com.exa.userservice.entity.User;
 import com.exa.userservice.feignClients.AccountFeignClients;
 import com.exa.userservice.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,6 +88,16 @@ public class UserService {
         } catch (Exception e) {
             throw new RuntimeException("Account not found or account-service unavailable");
         }
+    }
+
+    public Page<UserDTO> searchUsers(String email, String phone, String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> users = userRepository.searchUsers(email, phone, name, pageable);
+        return users.map(user -> {
+            UserDTO dto = new UserDTO();
+            BeanUtils.copyProperties(user, dto);
+            return dto;
+        });
     }
 
 }
