@@ -49,6 +49,13 @@ public class AccountService {
         return updatedAccountDTO;
     }
 
+    public void updateAccountBalance(Integer accountId, Double balance) throws AccountNotFoundException {
+        Account existingAccount = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException("Account " + accountId + " not found"));
+        existingAccount.setBalance(existingAccount.getBalance() + balance);
+        accountRepository.save(existingAccount);
+    }
+
     public boolean deleteAccount(Integer accountId) throws AccountNotFoundException {
         Account existingAccount = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException("Account " + accountId + " not found"));
