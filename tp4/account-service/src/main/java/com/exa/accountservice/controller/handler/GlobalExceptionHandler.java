@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.time.format.DateTimeParseException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,6 +24,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(ApiErrorDTO.builder().error("Illegal Argument").message(ex.getMessage()).build());
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    public ResponseEntity<ApiErrorDTO> handleDateTimeParseException(DateTimeParseException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(ApiErrorDTO.builder().error("Date Time Parse Error").message("Invalid date format: " + ex.getParsedString()).build());
     }
 
     @ExceptionHandler(AccountNotFoundException.class)

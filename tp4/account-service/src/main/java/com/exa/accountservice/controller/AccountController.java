@@ -88,7 +88,6 @@ public class AccountController {
     public ResponseEntity<Boolean> deleteAccount(@PathVariable Integer id) throws AccountNotFoundException {
         boolean deleted = accountService.deleteAccount(id);
         return ResponseEntity.ok(deleted);
-
     }
 
     @PutMapping("/{id}/state")
