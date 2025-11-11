@@ -8,11 +8,14 @@ import com.exa.accountservice.entity.AccountTransaction;
 import com.exa.accountservice.enums.TransactionTypeEnum;
 import com.exa.accountservice.repository.AccountTransactionRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -38,6 +41,19 @@ public class AccountTransactionService {
         validateAmount(transactionDTO.amount());
         AccountDTO accountDTO = accountService.updateAccountBalance(transactionDTO.accountId(), -transactionDTO.amount());
         return recordTransaction(accountDTO, transactionDTO.amount(), TransactionTypeEnum.CHARGE);
+    }
+
+    public List<AccountTransactionDTO> findAccountTransactionsByDateTimeBetween(LocalDate dateAfter, LocalDate dateBefore) {
+        validateDateRange(dateAfter, dateBefore);
+        LocalDateTime dateTimeAfter = dateAfter.atStartOfDay();
+        LocalDateTime dateTimeBefore = dateBefore.plusDays(1).atStartOfDay();
+        return accountTransactionRepository.findAccountTransactionsByDateTimeBetween(dateTimeAfter, dateTimeBefore, Sort.by("dateTime").ascending());
+    }
+
+    private void validateDateRange(LocalDate dateAfter, LocalDate dateBefore) {
+        if (dateAfter.isAfter(dateBefore)) {
+            throw new IllegalArgumentException("dateAfter must not be after dateBefore");
+        }
     }
 
     private void validateAmount(double amount) throws IllegalArgumentException {
