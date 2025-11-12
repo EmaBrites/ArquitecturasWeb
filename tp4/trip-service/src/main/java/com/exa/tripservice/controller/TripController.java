@@ -20,12 +20,7 @@ public class TripController {
 
     @PostMapping
     public ResponseEntity<Trip> startTrip(@RequestBody TripDTO dto) {
-        Trip trip = tripService.startTrip(
-                dto.getAccountId(),
-                dto.getScooterId(),
-                dto.getStartLat(),
-                dto.getStartLon()
-        );
+        Trip trip = tripService.startTrip(dto);
         return ResponseEntity.ok(trip);
     }
 
@@ -43,23 +38,26 @@ public class TripController {
 
     // Finalizar viaje
     @PostMapping("/{id}/end")
-    public ResponseEntity<Trip> endTrip(@PathVariable Long id, @RequestBody TripDTO dto) {
-        Trip trip = tripService.endTrip(id, dto.getEndLat(), dto.getEndLon(), dto.getKilometers());
+    public ResponseEntity<Trip> endTrip(
+            @PathVariable Long id,
+            @RequestParam Double endLat,
+            @RequestParam Double endLon,
+            @RequestParam Double kilometers) {
+
+        Trip trip = tripService.endTrip(id, endLat, endLon, kilometers);
         return ResponseEntity.ok(trip);
     }
 
     //Consultar viaje
     @GetMapping
-    public ResponseEntity<List<Trip>> getTrips(
+    public ResponseEntity<List<Trip>> getTripsFiltered(
             @RequestParam(required = false) Long accountId,
             @RequestParam(required = false) Long scooterId,
             @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            LocalDateTime from,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
             @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            LocalDateTime to
-    ) {
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+
         List<Trip> trips = tripService.getTripsFiltered(accountId, scooterId, from, to);
         return ResponseEntity.ok(trips);
     }

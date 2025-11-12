@@ -1,12 +1,12 @@
 package com.exa.tripservice.service;
-
+import com.exa.tripservice.dto.TripDTO;
+import com.exa.tripservice.feignClients.AccountClient;
+import com.exa.tripservice.feignClients.ScooterClient;
+import com.exa.tripservice.feignClients.StopClient;
 import com.exa.tripservice.model.Trip;
 import com.exa.tripservice.repository.TripRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,22 +16,17 @@ import java.util.List;
 public class TripService {
 
     private final TripRepository tripRepository;
-    private final ExternalServicesClient externalServicesClient;
-
-    //  Inyectamos las URLs del properties
-    @Value("${microservices.account}")
-    private String accountMsUrl;
-
-    @Value("${microservices.scooter}")
-    private String scooterMsUrl;
+    private final AccountClient accountClient;
+    private final ScooterClient scooterClient;
+    private final StopClient stopClient;
 
     // US-TRIP-01
-    public Trip startTrip(Long accountId, Long scooterId, Double startLat, Double startLon) {
+    public Trip startTrip(TripDTO dto) {
         Trip trip = new Trip();
-        trip.setAccountId(accountId);
-        trip.setScooterId(scooterId);
-        trip.setStartLat(startLat);
-        trip.setStartLon(startLon);
+        trip.setAccountId(dto.getAccountId());
+        trip.setScooterId(dto.getScooterId());
+        trip.setStartLat(dto.getStartLat());
+        trip.setStartLon(dto.getStartLon());
         trip.setStartTime(LocalDateTime.now());
         trip.setStatus("ACTIVE");
         return tripRepository.save(trip);
@@ -58,58 +53,59 @@ public class TripService {
 
         Duration pauseDuration = Duration.between(trip.getPauseTime(), LocalDateTime.now());
         if (pauseDuration.toMinutes() > 15) trip.setLongPause(true);
-        trip.setStatus("ACTIVE");
+
         trip.setPauseTime(null);
+        trip.setStatus("ACTIVE");
         return tripRepository.save(trip);
     }
-    //US-TRIP-03-05
+
+    // US-TRIP-03 + US-TRIP-05
     public Trip endTrip(Long tripId, Double endLat, Double endLon, Double kilometers) {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
 
-        if (!"ACTIVE".equals(trip.getStatus())) {
+        if (!"ACTIVE".equals(trip.getStatus()))
             throw new RuntimeException("Solo se pueden finalizar viajes activos");
-        }
 
-        // Validar parada
-        boolean stopValid = externalServicesClient.isStopValid(endLat, endLon);
-        if (!stopValid) {
-            throw new RuntimeException("No estás en una parada válida para finalizar el viaje");
-        }
+        //  Validar parada (Stop MS)
+        Boolean validStop = stopClient.validateStop(endLat, endLon);
+        if (Boolean.FALSE.equals(validStop))
+            throw new RuntimeException("No estás en una parada válida");
 
-        // Calcular datos del viaje
+        //  Cargar datos finales
         trip.setEndLat(endLat);
         trip.setEndLon(endLon);
         trip.setEndTime(LocalDateTime.now());
         trip.setKilometers(kilometers);
-
         Duration duration = Duration.between(trip.getStartTime(), trip.getEndTime());
         trip.setDurationMinutes(duration.toMinutes());
 
+        //  Cambiar estado
+        trip.setStatus("FINISHED");
+
+        // Notificar Scooter MS
+        try {
+            scooterClient.updateScooterStatus(trip.getScooterId(), "AVAILABLE");
+        } catch (Exception e) {
+            System.err.println("⚠️ Error al actualizar scooter: " + e.getMessage());
+        }
+
+        // 5 Cobrar al Account MS (US-TRIP-05)
         double pricePerKm = 30.0;
         double total = kilometers * pricePerKm;
 
-        // Notificar Scooter MS (lo mantenés igual)
-        externalServicesClient.setScooterAvailable(trip.getScooterId());
-
-        //  Intentar cobrar al Account MS
-        boolean charged = externalServicesClient.chargeAccount(trip.getAccountId(), total);
-        if (charged) {
-            trip.setStatus("FINISHED");
-        } else {
+        try {
+            accountClient.chargeAccount(trip.getAccountId(), total);
+        } catch (Exception e) {
             trip.setStatus("BILLING_ERROR");
+            System.err.println(" Error al facturar cuenta: " + e.getMessage());
         }
 
         return tripRepository.save(trip);
     }
-    //US-TRIP-04
 
+    // US-TRIP-04
     public List<Trip> getTripsFiltered(Long accountId, Long scooterId, LocalDateTime from, LocalDateTime to) {
         return tripRepository.findFilteredTrips(accountId, scooterId, from, to);
-    }
-
-
-    public List<Trip> getTripsByAccount(Long accountId) {
-        return tripRepository.findByAccountId(accountId);
     }
 }
