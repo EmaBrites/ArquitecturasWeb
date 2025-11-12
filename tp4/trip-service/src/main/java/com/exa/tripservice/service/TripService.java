@@ -7,6 +7,7 @@ import com.exa.tripservice.feignClients.StopClient;
 import com.exa.tripservice.model.Trip;
 import com.exa.tripservice.repository.TripRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,6 +21,8 @@ public class TripService {
     private final AccountClient accountClient;
     private final ScooterClient scooterClient;
     private final StopClient stopClient;
+    @Value("${trip.price.per.km}")
+    private double pricePerKm;
 
     // US-TRIP-01
     public Trip startTrip(TripDTO dto) {
@@ -88,11 +91,10 @@ public class TripService {
         try {
             scooterClient.updateScooterStatus(trip.getScooterId(), "AVAILABLE");
         } catch (Exception e) {
-            System.err.println("️ Error al actualizar scooter: " + e.getMessage());
+            System.err.println("Error al actualizar scooter: " + e.getMessage());
         }
 
         // 5 Cobrar al Account MS (US-TRIP-05)
-        double pricePerKm = 30.0;
         double total = kilometers * pricePerKm;
 
         try {

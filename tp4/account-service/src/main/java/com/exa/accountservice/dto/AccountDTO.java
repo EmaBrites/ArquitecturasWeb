@@ -1,5 +1,6 @@
 package com.exa.accountservice.dto;
 
+import com.exa.accountservice.enums.AccountStateEnum;
 import com.exa.accountservice.enums.AccountTypeEnum;
 import lombok.Data;
 
@@ -12,5 +13,6 @@ public class AccountDTO implements Serializable {
     private int userId;
     private LocalDateTime createdDate;
     private AccountTypeEnum accountType;
+    private AccountStateEnum accountState;
     private Double balance;
 }

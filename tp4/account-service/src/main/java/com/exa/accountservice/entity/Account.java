@@ -1,5 +1,6 @@
 package com.exa.accountservice.entity;
 
+import com.exa.accountservice.enums.AccountStateEnum;
 import com.exa.accountservice.enums.AccountTypeEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,11 +25,10 @@ public class Account {
     @Column(nullable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+
+    @Enumerated(value = EnumType.STRING)
     private AccountTypeEnum accountType;
 
     @Column(nullable = false)
     private Double balance; //
 }
-

@@ -4,6 +4,7 @@ import com.exa.accountservice.dto.AccountDTO;
 import com.exa.accountservice.dto.CreateAccountDTO;
 import com.exa.accountservice.dto.UpdateAccountDTO;
 import com.exa.accountservice.entity.Account;
+import com.exa.accountservice.enums.AccountStateEnum;
 import com.exa.accountservice.repository.AccountRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,9 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public AccountDTO createAccount(CreateAccountDTO dto) {
+    public AccountDTO createAccount(CreateAccountDTO createAccountDTO) {
         Account account = new Account();
-        account.setUserId(dto.getUserId());
-        account.setAccountType(dto.getAccountType());
-        account.setBalance(dto.getBalance());
+        BeanUtils.copyProperties(createAccountDTO, account);
         account.setCreatedDate(LocalDateTime.now());
 
         Account saved = accountRepository.save(account);
@@ -71,5 +70,17 @@ public class AccountService {
                 .orElseThrow(() -> new AccountNotFoundException("Account " + accountId + " not found"));
         accountRepository.delete(existingAccount);
         return true;
+    }
+
+    private void validateNewBalance(double newBalance) {
+        if (newBalance < 0) {
+            throw new IllegalArgumentException("Account balance cannot be negative");
+        }
+    }
+
+    private void validateActiveAccount(Account existingAccount) throws IllegalStateException {
+        if (existingAccount.getAccountState() != AccountStateEnum.ACTIVE) {
+            throw new IllegalStateException("Account must be ACTIVE to perform this operation");
+        }
     }
 }
