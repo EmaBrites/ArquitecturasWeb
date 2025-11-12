@@ -24,7 +24,9 @@ public class Scooter {
     @Enumerated(EnumType.STRING)
     private ScooterState state;
 
+    @Column(nullable=false)
     private Double accumulatedKms = 0.0;
+    @Column(nullable=false)
     private Long accumulatedMinutes = 0L;
 
     @Version

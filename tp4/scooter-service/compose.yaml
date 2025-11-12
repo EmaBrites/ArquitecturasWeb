@@ -1,1 +1,10 @@
 services:
+  db:
+    image: mysql
+    container_name: scooter-service
+    restart: always
+    environment:
+      MYSQL_DATABASE: scooter_db
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3312:3306"
