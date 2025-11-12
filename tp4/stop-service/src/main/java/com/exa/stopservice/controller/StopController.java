@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,5 +87,11 @@ public class StopController {
         }catch (NotFoundException e){
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping
+    @Operation(summary = "Check valid stop by coordinates")
+    public boolean checkValidStop(@Param("latitude") double latitude, @Param("longitude") double longitude){
+        return stopService.isStop(latitude,longitude);
     }
 }
