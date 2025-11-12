@@ -1,6 +1,6 @@
-package com.exa.accountservice.dto;
+package com.exa.userservice.dto;
 
-import com.exa.accountservice.enums.AccountTypeEnum;
+import com.exa.userservice.enums.AccountTypeEnum;
 
 import java.io.Serializable;
 

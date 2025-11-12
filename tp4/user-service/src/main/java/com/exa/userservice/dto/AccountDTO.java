@@ -1,4 +1,4 @@
-package com.exa.accountservice.dto;
+package com.exa.userservice.dto;
 
 import com.exa.accountservice.enums.AccountTypeEnum;
 import lombok.Data;

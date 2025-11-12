@@ -1,0 +1,90 @@
+package com.exa.userservice.service;
+
+import com.exa.userservice.enums.AccountTypeEnum;
+import com.exa.userservice.dto.*;
+import com.exa.userservice.entity.User;
+import com.exa.userservice.feignClients.AccountFeignClients;
+import com.exa.userservice.repository.UserRepository;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.security.auth.login.AccountNotFoundException;
+import java.util.List;
+
+@Service
+@Transactional
+
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final AccountFeignClients accountFeignClients;
+
+    public UserService(UserRepository userRepository, AccountFeignClients accountFeignClients) {
+        this.userRepository = userRepository;
+        this.accountFeignClients = accountFeignClients;
+    }
+
+    public UserDTO createUser(CreateUserDTO dto) {
+        User user = new User();
+        BeanUtils.copyProperties(dto, user);
+        User saved = userRepository.save(user);
+        UserDTO result = new UserDTO();
+        BeanUtils.copyProperties(saved, result);
+        return result;
+    }
+
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(user -> {
+            UserDTO dto = new UserDTO();
+            BeanUtils.copyProperties(user, dto);
+            return dto;
+        }).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO getUserById(Integer id) throws AccountNotFoundException {
+        User user = userRepository.findById(id).orElseThrow(() -> new AccountNotFoundException("User " + id + " not found"));
+        UserDTO dto = new UserDTO();
+        BeanUtils.copyProperties(user, dto);
+        return dto;
+    }
+
+    public UserDTO updateUser(Integer id, UpdateUserDTO dto) throws AccountNotFoundException {
+        User existing = userRepository.findById(id).orElseThrow(() -> new AccountNotFoundException("User " + id + " not found"));
+        BeanUtils.copyProperties(dto, existing);
+        User updated = userRepository.save(existing);
+        UserDTO result = new UserDTO();
+        BeanUtils.copyProperties(updated, result);
+        return result;
+    }
+
+    public boolean deleteUser(Integer id) throws AccountNotFoundException {
+        User existing = userRepository.findById(id).orElseThrow(() -> new AccountNotFoundException("User " + id + " not found"));
+        userRepository.delete(existing);
+        return true;
+    }
+
+    public void associateAccount(Integer userId, AccountTypeEnum accountType) {
+        userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        CreateAccountDTO newAccount = new CreateAccountDTO(userId, accountType);
+        accountFeignClients.createAccount(newAccount);
+    }
+
+    public void disassociateAccount(Integer userId, Integer accountId) {
+        userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        try {
+            ResponseEntity<AccountDTO> accountResponse = accountFeignClients.getAccountById(accountId);
+            if (accountResponse.getStatusCode().is2xxSuccessful() && accountResponse.getBody() != null) {
+                accountFeignClients.deleteAccount(accountId);
+            } else {
+                throw new RuntimeException("Account not found");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Account not found or account-service unavailable");
+        }
+    }
+
+}

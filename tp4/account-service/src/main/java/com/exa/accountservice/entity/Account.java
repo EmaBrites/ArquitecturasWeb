@@ -1,5 +1,6 @@
 package com.exa.accountservice.entity;
 
+import com.exa.accountservice.enums.AccountTypeEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,5 +22,5 @@ public class Account {
     @Column(nullable = false)
     private AccountTypeEnum accountType;
     @Column(nullable = false)
-    private long balance;
+    private double balance;
 }
