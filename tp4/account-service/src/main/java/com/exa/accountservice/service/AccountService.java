@@ -21,15 +21,25 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public AccountDTO createAccount(CreateAccountDTO createAccountDTO) {
+    public AccountDTO createAccount(CreateAccountDTO dto) {
         Account account = new Account();
-        BeanUtils.copyProperties(createAccountDTO, account);
+        account.setUserId(dto.getUserId());
+        account.setAccountType(dto.getAccountType());
+        account.setBalance(dto.getBalance());
         account.setCreatedDate(LocalDateTime.now());
-        Account savedAccount = accountRepository.save(account);
-        AccountDTO savedAccountDTO = new AccountDTO();
-        BeanUtils.copyProperties(savedAccount, savedAccountDTO);
-        return savedAccountDTO;
+
+        Account saved = accountRepository.save(account);
+
+        AccountDTO response = new AccountDTO();
+        response.setId(saved.getId());
+        response.setUserId(saved.getUserId());
+        response.setAccountType(saved.getAccountType());
+        response.setBalance(saved.getBalance());
+        response.setCreatedDate(saved.getCreatedDate());
+
+        return response;
     }
+
 
     @Transactional(readOnly = true)
     public AccountDTO getAccountById(Integer accountId) throws AccountNotFoundException {
@@ -47,6 +57,13 @@ public class AccountService {
         AccountDTO updatedAccountDTO = new AccountDTO();
         BeanUtils.copyProperties(updatedAccount, updatedAccountDTO);
         return updatedAccountDTO;
+    }
+
+    public void updateAccountBalance(Integer accountId, Double balance) throws AccountNotFoundException {
+        Account existingAccount = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException("Account " + accountId + " not found"));
+        existingAccount.setBalance(existingAccount.getBalance() + balance);
+        accountRepository.save(existingAccount);
     }
 
     public boolean deleteAccount(Integer accountId) throws AccountNotFoundException {

@@ -1,6 +1,7 @@
 package com.exa.tripservice.controller;
 
 import com.exa.tripservice.dto.TripDTO;
+import com.exa.tripservice.dto.TripEndDTO;
 import com.exa.tripservice.model.Trip;
 import com.exa.tripservice.service.TripService;
 import lombok.RequiredArgsConstructor;
@@ -40,11 +41,14 @@ public class TripController {
     @PostMapping("/{id}/end")
     public ResponseEntity<Trip> endTrip(
             @PathVariable Long id,
-            @RequestParam Double endLat,
-            @RequestParam Double endLon,
-            @RequestParam Double kilometers) {
+            @RequestBody TripEndDTO dto) {
+        Trip trip = tripService.endTrip(
+                id,
+                dto.getEndLat(),
+                dto.getEndLon(),
+                dto.getKilometers()
+        );
 
-        Trip trip = tripService.endTrip(id, endLat, endLon, kilometers);
         return ResponseEntity.ok(trip);
     }
 

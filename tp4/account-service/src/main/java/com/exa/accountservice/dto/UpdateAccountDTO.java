@@ -1,11 +1,8 @@
 package com.exa.accountservice.dto;
 
-import com.exa.accountservice.entity.AccountTypeEnum;
-import lombok.Value;
+import com.exa.accountservice.enums.AccountTypeEnum;
 
 import java.io.Serializable;
 
-@Value
-public class UpdateAccountDTO implements Serializable {
-    AccountTypeEnum accountType;
+public record UpdateAccountDTO(AccountTypeEnum accountType) implements Serializable {
 }

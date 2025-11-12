@@ -1,25 +1,34 @@
 package com.exa.accountservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.exa.accountservice.enums.AccountTypeEnum;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Account {
+
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id; // OK
+
     @Column(nullable = false)
-    private int userId;
+    private Integer userId; //
+
     @Column(nullable = false)
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDate = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccountTypeEnum accountType;
+
     @Column(nullable = false)
-    private long balance;
+    private Double balance; //
 }
+

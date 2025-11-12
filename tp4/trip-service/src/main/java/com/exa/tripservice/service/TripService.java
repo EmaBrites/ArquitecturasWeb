@@ -1,4 +1,5 @@
 package com.exa.tripservice.service;
+import com.exa.tripservice.dto.TransactionDTO;
 import com.exa.tripservice.dto.TripDTO;
 import com.exa.tripservice.feignClients.AccountClient;
 import com.exa.tripservice.feignClients.ScooterClient;
@@ -87,7 +88,7 @@ public class TripService {
         try {
             scooterClient.updateScooterStatus(trip.getScooterId(), "AVAILABLE");
         } catch (Exception e) {
-            System.err.println("⚠️ Error al actualizar scooter: " + e.getMessage());
+            System.err.println("️ Error al actualizar scooter: " + e.getMessage());
         }
 
         // 5 Cobrar al Account MS (US-TRIP-05)
@@ -95,13 +96,17 @@ public class TripService {
         double total = kilometers * pricePerKm;
 
         try {
-            accountClient.chargeAccount(trip.getAccountId(), total);
+            TransactionDTO transaction = new TransactionDTO();
+            transaction.setAccountId(trip.getAccountId());
+            transaction.setAmount(total);
+            transaction.setDescription("Trip charge for trip ID " + trip.getId());
+
+            accountClient.chargeAccount(transaction);
         } catch (Exception e) {
             trip.setStatus("BILLING_ERROR");
             System.err.println(" Error al facturar cuenta: " + e.getMessage());
         }
-
-        return tripRepository.save(trip);
+        return trip;
     }
 
     // US-TRIP-04

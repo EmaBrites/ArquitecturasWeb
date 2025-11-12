@@ -1,13 +1,15 @@
+
 package com.exa.tripservice.feignClients;
 
+import com.exa.tripservice.dto.TransactionDTO;
+import com.exa.tripservice.dto.AccountTransactionDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "account-ms", url = "${microservices.account}")
 public interface AccountClient {
 
-    @PutMapping("/accounts/{id}/charge")
-    void chargeAccount(@PathVariable("id") Long accountId, @RequestParam("amount") double amount);
+    @PostMapping("/account/transaction/charge")
+    AccountTransactionDTO chargeAccount(@RequestBody TransactionDTO transactionDTO);
 }

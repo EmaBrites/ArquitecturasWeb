@@ -1,4 +1,4 @@
-package com.exa.accountservice.entity;
+package com.exa.userservice.enums;
 
 import lombok.Getter;
 
