@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 
 @Service
@@ -55,5 +54,13 @@ public class StopService {
                 .orElseThrow(()->new NotFoundException("Stop", id));
         stopRepository.delete(stop);
         return new StopDTO(stop);
+    }
+
+    public boolean isStop(double latitude, double longitude){
+        Stop stop = stopRepository.getStopByCoordinates(latitude,longitude);
+        if (stop!=null){
+            return true;
+        }
+        return false;
     }
 }
