@@ -56,11 +56,9 @@ public class StopService {
         return new StopDTO(stop);
     }
 
+    @Transactional(readOnly = true)
     public boolean isStop(double latitude, double longitude){
         Stop stop = stopRepository.getStopByCoordinates(latitude,longitude);
-        if (stop!=null){
-            return true;
-        }
-        return false;
+        return stop != null;
     }
 }
