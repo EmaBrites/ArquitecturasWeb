@@ -89,9 +89,9 @@ public class StopController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/validate")
     @Operation(summary = "Check valid stop by coordinates")
-    public boolean checkValidStop(@Param("latitude") double latitude, @Param("longitude") double longitude){
+    public boolean checkValidStop(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude){
         return stopService.isStop(latitude,longitude);
     }
 }
