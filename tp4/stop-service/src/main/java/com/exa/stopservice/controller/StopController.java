@@ -91,6 +91,9 @@ public class StopController {
 
     @GetMapping("/validate")
     @Operation(summary = "Check valid stop by coordinates")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns true if coordinates match a valid stop, false otherwise")
+    })
     public boolean checkValidStop(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude){
         return stopService.isStop(latitude,longitude);
     }
