@@ -20,8 +20,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>admin-service</module>
-        <module>map-service</module>
+        <module>gateway-service</module>
         <module>account-service</module>
         <module>report-service</module>
         <module>scooter-service</module>

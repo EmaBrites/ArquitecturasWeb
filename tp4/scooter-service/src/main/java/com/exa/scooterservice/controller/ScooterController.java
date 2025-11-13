@@ -58,7 +58,7 @@ public class ScooterController {
         }
     }
 
-    @PatchMapping("/{id}/state")
+    @PutMapping("/{id}/state")
     public ResponseEntity<Scooter> updateState(@PathVariable Long id, @RequestBody StateUpdateDTO dto) {
         Scooter updatedScooter = service.updateState(id, dto.getState());
         return ResponseEntity.ok(updatedScooter); // 200 OK
