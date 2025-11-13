@@ -37,7 +37,6 @@ public class TripController {
         return ResponseEntity.ok(tripService.resumeTrip(id));
     }
 
-    // Finalizar viaje
     @PutMapping("/{id}/end")
     public ResponseEntity<Trip> endTrip(
             @PathVariable Long id,
