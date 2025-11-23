@@ -37,7 +37,7 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @PostMapping
+    @PostMapping//TODO no deberíamos checkear que el usuario sea valido? probé creando userid 0 sin que exista y funciona
     @Operation(summary = "Create a new account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Account created successfully",
@@ -77,7 +77,7 @@ public class AccountController {
         return ResponseEntity.ok(updatedAccount);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") //TODO estandarizemos si devolvemos un true/false o el DTO de la entry que acabamos de eliminar
     @Operation(summary = "Delete an account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account deleted successfully",
