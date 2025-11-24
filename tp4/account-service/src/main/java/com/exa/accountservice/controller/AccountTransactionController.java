@@ -24,7 +24,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/account/transaction")
+@RequestMapping("/accounts/transaction")
 @Tag(name = "Account Transaction Controller", description = "APIs for managing account transactions")
 public class AccountTransactionController {
 
