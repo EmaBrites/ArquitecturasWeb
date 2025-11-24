@@ -1,83 +1,162 @@
 package com.exa.scooterservice.controller;
 
-import com.exa.scooterservice.dto.NearbyDTO;
-import com.exa.scooterservice.dto.StateUpdateDTO;
-import com.exa.scooterservice.dto.TelemetryDTO;
+import com.exa.scooterservice.Exception.NotFoundException;
+import com.exa.scooterservice.dto.*;
 import com.exa.scooterservice.model.Scooter;
 import com.exa.scooterservice.service.ScooterService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/scooters") //TODO acordar si usamos /api / plural|singular (contraste con accounts)
+@RequestMapping("/scooters")
 public class ScooterController {
-    @Autowired
-    private ScooterService service;
+    private final ScooterService scooterService;
 
-    @PostMapping //TODO debería recibir un ScooterDTO, no un scooter (para evitar tener que borrar el ID)
-    public ResponseEntity<Scooter> create(@RequestBody Scooter scooter) { //TODO manejar error serial duplicado, parece pavada pero pasa de id 1 a 3 si haces fallar el 2
-        Scooter createdScooter = service.createScooter(scooter);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdScooter); // 201 Created
+    public ScooterController(ScooterService scooterService){this.scooterService = scooterService;}
+
+    @PostMapping
+    @Operation(summary = "Create a new scooter")
+    @ApiResponses(value ={
+            @ApiResponse(responseCode = "201", description = "Scooter successfully created", content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ScooterDTO.class)
+            ))
+    })
+    public ResponseEntity<ScooterDTO> create(@RequestBody CreateScooterDTO scooterDTO) { //TODO manejar error serial duplicado, parece pavada pero pasa de id 1 a 3 si haces fallar el 2
+        ScooterDTO createdScooter = scooterService.createScooter(scooterDTO);
+        URI location = URI.create(String.format("/scooters/%s", createdScooter.getId()));
+        return ResponseEntity.created(location).body(createdScooter);
     }
 
     @GetMapping
-    public ResponseEntity<List<Scooter>> getAll() {
-        List<Scooter> scooters = service.getAllScooters();
-        return ResponseEntity.ok(scooters); // 200 OK
+    @Operation(summary = "Get all scooters")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "List of scooters", content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ScooterDTO.class)
+            ))
+    })
+    public ResponseEntity<List<ScooterDTO>> getAll() {
+        List<ScooterDTO> scooters = scooterService.getAllScooters();
+        return ResponseEntity.ok(scooters);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Scooter> getById(@PathVariable Long id) {
-        return service.getScooterById(id)
-                .map(scooter -> ResponseEntity.ok(scooter))  // 200 OK
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // 404 Not Found
-    }
-
-    @PutMapping("/{id}") //TODO debería recibir DTO y poder modificar solo campo que se actualiza, no tengo que adivinarle los valores que tenía en los demas campos o recibir 500/pisar
-    public ResponseEntity<Scooter> update(@PathVariable Long id, @Valid @RequestBody Scooter scooter) {
-        Scooter updatedScooter = service.updateScooter(id, scooter);
-        return ResponseEntity.ok(updatedScooter);  // 200 OK
-    }
-
-    @DeleteMapping("/{id}") //TODO debería devolver el DTO del scooter eliminado (o true/false, desempatar con accounts/stops)
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        try {
-            service.deleteScooter(id);
-            return ResponseEntity.ok().build(); // 200 OK si la eliminación fue exitosa
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found si el scooter no existe
+    @Operation(summary = "Get scooter by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Scooter found", content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ScooterDTO.class)
+            )),
+            @ApiResponse(responseCode = "404", description = "Scooter not found")
+    })
+    public ResponseEntity<ScooterDTO> getById(@PathVariable Integer id) {
+        try{
+            ScooterDTO scooterDTO = scooterService.getScooterById(id);
+            return ResponseEntity.ok(scooterDTO);
+        }
+        catch (NotFoundException e){
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PatchMapping("/{id}/state") //TODO mensaje de invalid-state - Y 100% OPINION, usaría PUT
-    public ResponseEntity<Scooter> updateState(@PathVariable Long id, @RequestBody StateUpdateDTO dto) {
-        Scooter updatedScooter = service.updateState(id, dto.getState());
-        return ResponseEntity.ok(updatedScooter); // 200 OK
+    @PutMapping("/{id}")
+    @Operation(summary = "Update an existing Scooter")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Scooter updated successfully", content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ScooterDTO.class)
+            )),
+            @ApiResponse(responseCode = "404", description = "Scooter not found")
+    })
+    public ResponseEntity<ScooterDTO> update(@PathVariable Integer id, @Valid @RequestBody CreateScooterDTO scooter) {
+        try{
+            ScooterDTO updatedScooter = scooterService.updateScooter(id, scooter);
+            return ResponseEntity.ok(updatedScooter);
+        }catch (NotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
-    //TODO 100% OPINION, usaría PUT
-    @PatchMapping("/{id}/telemetry") //TODO suena raro que el usuario tenga que conocer el Delta, puedo estar entendiendo mal como funciona
-    public ResponseEntity<Scooter> updateTelemetry(@PathVariable Long id, @RequestBody TelemetryDTO dto) {
-        Scooter updatedScooter = service.updateTelemetry(id, dto);
-        return ResponseEntity.ok(updatedScooter); // 200 OK
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a Scooter by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Scooter deleted successfully", content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ScooterDTO.class)
+            )),
+            @ApiResponse(responseCode = "404", description = "Scooter not found")
+    })
+    public ResponseEntity<ScooterDTO> delete(@PathVariable Integer id) {
+        try {
+            ScooterDTO deletedScooter = scooterService.deleteScooter(id);
+            return ResponseEntity.ok(deletedScooter);
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @GetMapping("/nearby") //TODO con ninguna variacion de radio logré que me dé los scooters cercanos
-    public ResponseEntity<List<NearbyDTO>> findNearby(
+    @PutMapping("/{id}/state") //TODO mensaje de invalid-state
+    @Operation(summary = "Update a Scooter's state")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "Scooter's state successfully updated",content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ScooterDTO.class)
+            )),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "404", description = "Scooter not found")
+    })
+    public ResponseEntity<ScooterDTO> updateState(@PathVariable Integer id, @RequestBody StateUpdateDTO dto) {
+        try{
+            ScooterDTO updatedScooter = scooterService.updateState(id, dto.getState());
+            return ResponseEntity.ok(updatedScooter);
+        }catch (NotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}/telemetry")
+    @Operation(summary = "Update a Scooter's telemetry")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Scooter's telemetry successfully updated", content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ScooterDTO.class)
+            )),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "404", description = "Scooter not found")
+    })
+    public ResponseEntity<ScooterDTO> updateTelemetry(@PathVariable Integer id, @RequestBody TelemetryDTO dto) {
+        try{
+            ScooterDTO updatedScooter = scooterService.updateTelemetry(id, dto);
+            return ResponseEntity.ok(updatedScooter);
+        }catch (NotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/nearby")
+    @Operation(summary = "Find nearby Scooters within a radius")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "List of scooters", content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ScooterDTO.class)
+            )),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
+    public ResponseEntity<List<NearbyDTO>> findNearby( //TODO acá ya habia uso de DTO, dejé as-is
             @RequestParam @NotNull @DecimalMin(value = "-90") @DecimalMax(value = "90") Double lat,
             @RequestParam @NotNull @DecimalMin(value = "-180") @DecimalMax(value = "180") Double lon,
             @RequestParam @NotNull @Positive Double radius) {
 
-        List<NearbyDTO> nearby = service.findNearby(lat, lon, radius);
-        return ResponseEntity.ok(nearby); // 200 OK
+        List<NearbyDTO> nearby = scooterService.findNearby(lat, lon, radius);
+        return ResponseEntity.ok(nearby);
     }
 }

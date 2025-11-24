@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ScooterRepository extends JpaRepository<Scooter, Long> {
+public interface ScooterRepository extends JpaRepository<Scooter, Integer> {
     List<Scooter> findByState(ScooterState state);
 }
