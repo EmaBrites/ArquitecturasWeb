@@ -27,6 +27,10 @@ public class TripService {
     @Value("${trip.price.per.km}")
     private double pricePerKm;
 
+    public List<Trip> getTrips(){
+        return tripRepository.findAll();
+    }
+
     // US-TRIP-01
     public Trip startTrip(TripDTO dto) {
         Trip trip = new Trip();
@@ -60,7 +64,12 @@ public class TripService {
 
         Duration pauseDuration = Duration.between(trip.getPauseTime(), LocalDateTime.now());
         if (pauseDuration.toMinutes() > 15) trip.setLongPause(true);
-
+        if(trip.getPauseDuration()!=null){
+            trip.setPauseDuration(trip.getPauseDuration()+pauseDuration.toMinutes());
+        }
+        else{
+            trip.setPauseDuration(pauseDuration.toMinutes());
+        }
         trip.setPauseTime(null);
         trip.setStatus("ACTIVE");
         return tripRepository.save(trip);
