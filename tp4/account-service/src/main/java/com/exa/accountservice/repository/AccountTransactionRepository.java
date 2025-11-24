@@ -16,4 +16,11 @@ public interface AccountTransactionRepository extends JpaRepository<AccountTrans
            "FROM AccountTransaction at " +
            "WHERE at.dateTime BETWEEN :dateTimeAfter AND :dateTimeBefore")
     List<AccountTransactionDTO> findAccountTransactionsByDateTimeBetween(LocalDateTime dateTimeAfter, LocalDateTime dateTimeBefore, Sort sort);
+
+    @Query("""
+            SELECT SUM(at.amount) FROM AccountTransaction at
+                    WHERE at.dateTime BETWEEN :dateTimeAfter AND :dateTimeBefore
+                                AND at.transactionType = com.exa.accountservice.enums.TransactionTypeEnum.CHARGE
+            """)
+    Double calculateTotalRevenue(LocalDateTime dateTimeAfter, LocalDateTime dateTimeBefore);
 }
