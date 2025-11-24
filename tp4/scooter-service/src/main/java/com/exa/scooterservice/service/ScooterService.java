@@ -1,97 +1,103 @@
 package com.exa.scooterservice.service;
 
+import com.exa.scooterservice.Exception.NotFoundException;
+import com.exa.scooterservice.dto.CreateScooterDTO;
 import com.exa.scooterservice.dto.NearbyDTO;
+import com.exa.scooterservice.dto.ScooterDTO;
 import com.exa.scooterservice.dto.TelemetryDTO;
 import com.exa.scooterservice.model.Scooter;
 import com.exa.scooterservice.model.ScooterState;
 import com.exa.scooterservice.repository.ScooterRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ScooterService {
+    private final ScooterRepository scooterRepository;
 
-    @Autowired
-    private ScooterRepository repository;
-
-    // CREATE
-    public Scooter createScooter(Scooter scooter) {
-        return repository.save(scooter);
+    public ScooterService(ScooterRepository scooterRepository){
+        this.scooterRepository = scooterRepository;
     }
 
-    // READ - get all
-    public List<Scooter> getAllScooters() {
-        return repository.findAll();
+    public ScooterDTO createScooter(CreateScooterDTO scooterDTO) {
+        Scooter scooter = new Scooter();
+        BeanUtils.copyProperties(scooterDTO,scooter);
+
+        Scooter newScooter = scooterRepository.save(scooter);
+        return new ScooterDTO(newScooter);
     }
 
-    // READ - get by id
-    public Optional<Scooter> getScooterById(Long id) {
-        return repository.findById(id);
+    public List<ScooterDTO> getAllScooters() {
+        List<ScooterDTO> scooters = new ArrayList<>();
+        for (Scooter s: scooterRepository.findAll()){
+            scooters.add(new ScooterDTO(s));
+        }
+        return scooters;
     }
 
-    // UPDATE
-    public Scooter updateScooter(Long id, Scooter newData) {
-        return repository.findById(id)
-                .map(existing -> {
-                    existing.setSerial(newData.getSerial());
-                    existing.setLatitude(newData.getLatitude());
-                    existing.setLongitude(newData.getLongitude());
-                    existing.setState(newData.getState());
-                    existing.setAccumulatedKms(newData.getAccumulatedKms());
-                    existing.setAccumulatedMinutes(newData.getAccumulatedMinutes());
-                    return repository.save(existing);
-                })
-                .orElseThrow(() -> new RuntimeException("Scooter not found"));
+    public ScooterDTO getScooterById(int id) {
+        return scooterRepository.findById(id)
+                .map(ScooterDTO::new)
+                .orElseThrow(()-> new NotFoundException("Scooter",id));
     }
 
-    // DELETE (lógico o real)
-    public void deleteScooter(Long id) {
-        repository.deleteById(id);
+    public ScooterDTO updateScooter(int id, CreateScooterDTO scooterDTO) {
+        Scooter scooter = scooterRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("scooter",id));
+        BeanUtils.copyProperties(scooterDTO,scooter);
+
+        Scooter updatedScooter = scooterRepository.save(scooter);
+        return new ScooterDTO(updatedScooter);
     }
 
-    // ADMIN CAMBIA ESTADO (mantenimiento/de baja)
-    public Scooter updateState(Long id, ScooterState newState) {
-        return repository.findById(id)
-                .map(scooter -> {
-                    scooter.setState(newState);
-                    return repository.save(scooter);
-                })
-                .orElseThrow(() -> new RuntimeException("Scooter not found"));
+    public ScooterDTO deleteScooter(int id) {
+        Scooter scooter = scooterRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Scooter",id));
+
+        scooterRepository.deleteById(id);
+        return new ScooterDTO(scooter);
+    }
+
+    // ADMIN CAMBIA ESTADO (mantenimiento/de baja) TODO suena a redundante con el update general, podría reusarse
+    public ScooterDTO updateState(int id, ScooterState newState) {
+        Scooter scooter = scooterRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException("scooter",id));
+        scooter.setState(newState);
+        Scooter updatedScooter = scooterRepository.save(scooter);
+        return new ScooterDTO(updatedScooter);
     }
 
     //SISTEMA RECIBE INFO NUEVA DEL GPS DEL MONOPATIN
-    public Scooter updateTelemetry(Long id, TelemetryDTO telemetry) {
-        return repository.findById(id)
-            .map(scooter -> {
-                // actualizar posición
-                scooter.setLatitude(telemetry.getLatitude());
-                scooter.setLongitude(telemetry.getLongitude());
+    public ScooterDTO updateTelemetry(int id, TelemetryDTO telemetry) {
+        Scooter scooter = scooterRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("scooter",id));
+            // actualizar posición
+            scooter.setLatitude(telemetry.getLatitude());
+            scooter.setLongitude(telemetry.getLongitude());
 
-                // sumar acumulados (si vienen valores)
-                if (telemetry.getKmDelta() != null) {
-                    scooter.setAccumulatedKms(
-                            (scooter.getAccumulatedKms() == null ? 0.0 : scooter.getAccumulatedKms()) + telemetry.getKmDelta()
-                    );
-                }
-                if (telemetry.getMinutesDelta() != null) {
-                    scooter.setAccumulatedMinutes(
-                            (scooter.getAccumulatedMinutes() == null ? 0L : scooter.getAccumulatedMinutes())
-                                    + telemetry.getMinutesDelta()
-                    );
-                }
-                return repository.save(scooter);
-            })
-            .orElseThrow(() -> new RuntimeException("Scooter not found"));
+            // sumar acumulados (si vienen valores)
+            if (telemetry.getKmDelta() != null) {
+                scooter.setAccumulatedKms(
+                        (scooter.getAccumulatedKms() == null ? 0.0 : scooter.getAccumulatedKms()) + telemetry.getKmDelta()
+                );
+            }
+            if (telemetry.getMinutesDelta() != null) {
+                scooter.setAccumulatedMinutes(
+                        (scooter.getAccumulatedMinutes() == null ? 0L : scooter.getAccumulatedMinutes())
+                                + telemetry.getMinutesDelta()
+                );
+            }
+        Scooter updatedScooter = scooterRepository.save(scooter);
+        return new ScooterDTO(updatedScooter);
     }
 
     // PERMITE AL USUARIO VER MONOPATINES CERCA
     public List<NearbyDTO> findNearby(Double lat, Double lon, Double radiusKm) {
-        List<Scooter> available = repository.findByState(ScooterState.AVAILABLE);
+        List<Scooter> available = scooterRepository.findByState(ScooterState.AVAILABLE);
 
         return available.stream()
                 // Evita errores si hay scooters sin coordenadas
@@ -111,6 +117,7 @@ public class ScooterService {
                 .collect(Collectors.toList());
     }
 
+    //Metodo auxiliar para calcular distancia entre 2 ubicaciones
     private double distanceKm(Double lat1, Double lon1, Double lat2, Double lon2) {
         if (lat1 == null || lon1 == null || lat2 == null || lon2 == null)
             return Double.MAX_VALUE;
