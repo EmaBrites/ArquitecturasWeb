@@ -1,7 +1,9 @@
 package com.exa.userservice.controller;
 
+import com.exa.userservice.dto.CreateUserDTO;
+import com.exa.userservice.dto.UpdateUserDTO;
+import com.exa.userservice.dto.UserDTO;
 import com.exa.userservice.enums.AccountTypeEnum;
-import com.exa.userservice.dto.*;
 import com.exa.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,7 +12,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.net.URI;
@@ -28,7 +38,9 @@ public class UserController {
 
     @PostMapping
     @Operation(summary = "Create a new user")
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))), @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User created successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class)))})
     public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserDTO dto) {
         UserDTO created = userService.createUser(dto);
         URI location = URI.create(String.format("/users/%s", created.getId()));
@@ -37,15 +49,21 @@ public class UserController {
 
     @GetMapping
     @Operation(summary = "Get all users")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "List of users retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))), @ApiResponse(responseCode = "204", description = "No users found", content = @Content)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of users retrieved successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No users found", content = @Content)})
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
-        return users.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(users);
+        return users.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get user by ID")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User found successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))), @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User found successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
     public ResponseEntity<UserDTO> getUser(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(userService.getUserById(id));
@@ -56,7 +74,11 @@ public class UserController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update existing user")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))), @ApiResponse(responseCode = "400", description = "Invalid update data", content = @Content), @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User updated successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid update data", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
     public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UpdateUserDTO dto) {
         try {
             return ResponseEntity.ok(userService.updateUser(id, dto));
@@ -67,7 +89,10 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete user")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User deleted successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))), @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User deleted successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
     public ResponseEntity<Boolean> deleteUser(@PathVariable Integer id) {
         try {
             boolean deleted = userService.deleteUser(id);
@@ -79,15 +104,25 @@ public class UserController {
 
     @PostMapping("/{id}/newAccount/{type}")
     @Operation(summary = "Associate account")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Account associated successfully", content = @Content), @ApiResponse(responseCode = "404", description = "User or account type not found", content = @Content), @ApiResponse(responseCode = "409", description = "Account already associated", content = @Content)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Account associated successfully", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User or account type not found", content = @Content)
+    })
     public ResponseEntity<Void> associateAccount(@PathVariable Integer id, @PathVariable AccountTypeEnum type) {
-        userService.associateAccount(id, type);
-        return ResponseEntity.ok().build();
+        try {
+            userService.associateAccount(id, type);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}/accounts/{accountId}")
     @Operation(summary = "Disassociate account")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Account disassociated successfully", content = @Content), @ApiResponse(responseCode = "404", description = "User or account not found", content = @Content), @ApiResponse(responseCode = "503", description = "Account service unavailable", content = @Content)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Account disassociated successfully", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User or account not found", content = @Content),
+            @ApiResponse(responseCode = "503", description = "Account service unavailable", content = @Content)})
     public ResponseEntity<Void> disassociateAccount(@PathVariable Integer id, @PathVariable Integer accountId) {
         try {
             userService.disassociateAccount(id, accountId);
@@ -104,11 +139,19 @@ public class UserController {
 
     @GetMapping("/search")
     @Operation(summary = "Search users by email, phone or name with pagination")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Users retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))), @ApiResponse(responseCode = "204", description = "No users found", content = @Content)})
-    public ResponseEntity<Page<UserDTO>> searchUsers(@RequestParam(required = false) String email, @RequestParam(required = false) String phone, @RequestParam(required = false) String name, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Users retrieved successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No users found", content = @Content)})
+    public ResponseEntity<Page<UserDTO>> searchUsers(
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
         Page<UserDTO> result = userService.searchUsers(email, phone, name, page, size);
         if (result.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(result);
     }
