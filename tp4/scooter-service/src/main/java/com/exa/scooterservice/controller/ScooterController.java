@@ -2,7 +2,6 @@ package com.exa.scooterservice.controller;
 
 import com.exa.scooterservice.Exception.NotFoundException;
 import com.exa.scooterservice.dto.*;
-import com.exa.scooterservice.model.Scooter;
 import com.exa.scooterservice.service.ScooterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,8 +13,6 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import org.aspectj.weaver.ast.Not;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,13 +60,8 @@ public class ScooterController {
             @ApiResponse(responseCode = "404", description = "Scooter not found")
     })
     public ResponseEntity<ScooterDTO> getById(@PathVariable Integer id) {
-        try{
-            ScooterDTO scooterDTO = scooterService.getScooterById(id);
-            return ResponseEntity.ok(scooterDTO);
-        }
-        catch (NotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+        ScooterDTO scooterDTO = scooterService.getScooterById(id);
+        return ResponseEntity.ok(scooterDTO);
     }
 
     @PutMapping("/{id}")

@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class NearbyDTO {
-    private Long id;
+    private Integer id;
     private String serial;
     private Double latitude;
     private Double longitude;
