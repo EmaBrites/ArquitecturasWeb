@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "account-ms", url = "${microservices.account}")
 public interface AccountClient {
 
-    @PostMapping("/account/transaction/charge")
+    @PostMapping("/accounts/transactions/charge")
     AccountTransactionDTO chargeAccount(@RequestBody TransactionDTO transactionDTO);
 }

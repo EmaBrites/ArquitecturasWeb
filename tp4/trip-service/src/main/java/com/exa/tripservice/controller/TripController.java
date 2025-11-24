@@ -5,6 +5,7 @@ import com.exa.tripservice.dto.TripEndDTO;
 import com.exa.tripservice.model.Trip;
 import com.exa.tripservice.service.TripService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,11 @@ import java.util.List;
 public class TripController {
 
     private final TripService tripService;
+
+    @GetMapping
+    public ResponseEntity<List<Trip>> getTrips(){
+        return ResponseEntity.ok(tripService.getTrips());
+    }
 
     @PostMapping
     public ResponseEntity<Trip> startTrip(@RequestBody TripDTO dto) {
@@ -53,7 +59,7 @@ public class TripController {
     }
 
     //Consultar viaje
-    @GetMapping
+    @GetMapping("/filtered")
     public ResponseEntity<List<Trip>> getTripsFiltered(
             @RequestParam(required = false) Long accountId,
             @RequestParam(required = false) Long scooterId,
