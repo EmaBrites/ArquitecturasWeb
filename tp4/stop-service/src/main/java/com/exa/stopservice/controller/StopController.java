@@ -9,15 +9,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
-@RequestMapping("/stop")
+@RequestMapping("/stops")
 public class StopController {
 
     private final StopService stopService;
@@ -33,8 +32,20 @@ public class StopController {
     })
     public ResponseEntity<StopDTO> createStop(@RequestBody CreateStopDTO stopDTO){
         StopDTO createdStop = stopService.createStop(stopDTO);
-        URI location = URI.create(String.format("/account/%s", createdStop.getId()));
+        URI location = URI.create(String.format("/stops/%s", createdStop.getId()));
         return ResponseEntity.created(location).body(createdStop);
+    }
+
+    @GetMapping
+    @Operation(summary = "Get all stops")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "List of stops", content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = StopDTO.class)
+            ))
+    })
+    public ResponseEntity<List<StopDTO>> getAll() {
+        List<StopDTO> scooters = stopService.getStops();
+        return ResponseEntity.ok(scooters);
     }
 
     @GetMapping("/{id}")
@@ -55,7 +66,7 @@ public class StopController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") //TODO documentar mejor el 404, vuelve sin body
     @Operation(summary = "Update an existing stop")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Stop updated successfully", content = @Content(
