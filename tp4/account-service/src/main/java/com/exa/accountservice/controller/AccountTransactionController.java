@@ -62,7 +62,7 @@ public class AccountTransactionController {
         return ResponseEntity.ok().body(accountTransactionDTO);
     }
 
-    @GetMapping
+    @GetMapping("/report")
     @Operation(summary = "Get account transactions within a date range")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transactions retrieved successfully",
@@ -79,5 +79,24 @@ public class AccountTransactionController {
             LocalDate dateBefore) {
         List<AccountTransactionDTO> transactions = accountTransactionService.findAccountTransactionsByDateTimeBetween(dateAfter, dateBefore);
         return ResponseEntity.ok().body(transactions);
+    }
+
+    @GetMapping("/revenue")
+    @Operation(summary = "Get total revenue within a date range")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Revenue retrieved successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Double.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))),
+    })
+    public ResponseEntity<Double> getTotalRevenue(
+            @Parameter(description = "Start date in YYYY-MM-DD format")
+            @RequestParam
+            LocalDate startDate,
+            @Parameter(description = "Start date in YYYY-MM-DD format")
+            @RequestParam
+            LocalDate endDate) {
+        Double totalRevenue = accountTransactionService.calculateTotalRevenue(startDate, endDate);
+        return ResponseEntity.ok().body(totalRevenue);
     }
 }

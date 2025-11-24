@@ -77,4 +77,14 @@ public class AccountTransactionService {
         return accountTransactionDTO;
     }
 
+    public Double calculateTotalRevenue(LocalDate dateAfter, LocalDate dateBefore) {
+        validateDateRange(dateAfter, dateBefore);
+        LocalDateTime dateTimeAfter = dateAfter.atStartOfDay();
+        LocalDateTime dateTimeBefore = dateBefore.plusDays(1).atStartOfDay();
+        Double calculatedTotalRevenue = accountTransactionRepository.calculateTotalRevenue(dateTimeAfter, dateTimeBefore);
+        if (calculatedTotalRevenue == null) {
+            throw  new IllegalArgumentException("No revenue data found for the given date range");
+        }
+        return calculatedTotalRevenue;
+    }
 }
