@@ -86,12 +86,8 @@ public class AccountController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))),
     })
     public ResponseEntity<AccountDTO> deleteAccount(@PathVariable Integer id) throws AccountNotFoundException {
-        try{
-            AccountDTO deletedAccount = accountService.deleteAccount(id);
-            return ResponseEntity.ok(deletedAccount);
-        }catch (AccountNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+        AccountDTO deletedAccount = accountService.deleteAccount(id);
+        return ResponseEntity.ok(deletedAccount);
     }
 
     @PutMapping("/{id}/state")

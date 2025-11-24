@@ -9,7 +9,6 @@ import com.exa.scooterservice.model.Scooter;
 import com.exa.scooterservice.model.ScooterState;
 import com.exa.scooterservice.repository.ScooterRepository;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -39,7 +38,7 @@ public class ScooterService {
         return scooters;
     }
 
-    public ScooterDTO getScooterById(int id) {
+    public ScooterDTO getScooterById(Integer id) {
         return scooterRepository.findById(id)
                 .map(ScooterDTO::new)
                 .orElseThrow(()-> new NotFoundException("Scooter",id));
@@ -48,7 +47,7 @@ public class ScooterService {
     public ScooterDTO updateScooter(int id, CreateScooterDTO scooterDTO) {
         Scooter scooter = scooterRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("scooter",id));
-        BeanUtils.copyProperties(scooterDTO,scooter);
+        BeanUtils.copyProperties(scooterDTO,scooter,"id");
 
         Scooter updatedScooter = scooterRepository.save(scooter);
         return new ScooterDTO(updatedScooter);
