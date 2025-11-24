@@ -78,11 +78,13 @@ public class AccountService {
         return updatedAccountDTO;
     }
 
-    public boolean deleteAccount(Integer accountId) throws AccountNotFoundException {
+    public AccountDTO deleteAccount(Integer accountId) throws AccountNotFoundException {
         Account existingAccount = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException("Account " + accountId + " not found"));
         accountRepository.delete(existingAccount);
-        return true;
+        AccountDTO deletedAccountDTO = new AccountDTO();
+        BeanUtils.copyProperties(existingAccount, deletedAccountDTO);
+        return deletedAccountDTO;
     }
 
     private void validateNewBalance(double newBalance) {

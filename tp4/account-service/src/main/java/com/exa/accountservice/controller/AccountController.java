@@ -27,7 +27,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/accounts")
 @Tag(name = "Account Controller", description = "APIs for managing accounts")
 public class AccountController {
 
@@ -37,7 +37,7 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @PostMapping//TODO no deberíamos checkear que el usuario sea valido? probé creando userid 0 sin que exista y funciona
+    @PostMapping//TODO checkear que el usuario sea valido(llamado feign). Probé creando userid 0 sin que exista y funciona
     @Operation(summary = "Create a new account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Account created successfully",
@@ -77,7 +77,7 @@ public class AccountController {
         return ResponseEntity.ok(updatedAccount);
     }
 
-    @DeleteMapping("/{id}") //TODO estandarizemos si devolvemos un true/false o el DTO de la entry que acabamos de eliminar
+    @DeleteMapping("/{id}")
     @Operation(summary = "Delete an account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account deleted successfully",
@@ -85,9 +85,13 @@ public class AccountController {
             @ApiResponse(responseCode = "404", description = "Account not found",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))),
     })
-    public ResponseEntity<Boolean> deleteAccount(@PathVariable Integer id) throws AccountNotFoundException {
-        boolean deleted = accountService.deleteAccount(id);
-        return ResponseEntity.ok(deleted);
+    public ResponseEntity<AccountDTO> deleteAccount(@PathVariable Integer id) throws AccountNotFoundException {
+        try{
+            AccountDTO deletedAccount = accountService.deleteAccount(id);
+            return ResponseEntity.ok(deletedAccount);
+        }catch (AccountNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/{id}/state")
