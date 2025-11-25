@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +45,11 @@ public class TripService {
     }
 
     // US-TRIP-02
-    public Trip pauseTrip(Long tripId) {
+    public Trip pauseTrip(Long tripId) throws NoSuchElementException, IllegalArgumentException {
         Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("Viaje no encontrado"));
         if (!"ACTIVE".equals(trip.getStatus()))
-            throw new RuntimeException("Solo se pueden pausar viajes activos");
+            throw new IllegalArgumentException("Solo se pueden pausar viajes activos");
 
         trip.setPauseTime(LocalDateTime.now());
         trip.setStatus("PAUSED");
@@ -56,11 +57,11 @@ public class TripService {
         return tripRepository.save(trip);
     }
 
-    public Trip resumeTrip(Long tripId) {
+    public Trip resumeTrip(Long tripId) throws NoSuchElementException, IllegalArgumentException {
         Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("Viaje no encontrado"));
         if (!"PAUSED".equals(trip.getStatus()))
-            throw new RuntimeException("Solo se pueden reanudar viajes pausados");
+            throw new IllegalArgumentException("Solo se pueden reanudar viajes pausados");
 
         Duration pauseDuration = Duration.between(trip.getPauseTime(), LocalDateTime.now());
         if (pauseDuration.toMinutes() > 15) trip.setLongPause(true);
@@ -76,17 +77,17 @@ public class TripService {
     }
 
     // US-TRIP-03 + US-TRIP-05
-    public Trip endTrip(Long tripId, double endLat, double endLon, Double kilometers) {
+    public Trip endTrip(Long tripId, double endLat, double endLon, Double kilometers) throws NoSuchElementException {
         Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("Viaje no encontrado"));
 
         if (!"ACTIVE".equals(trip.getStatus()))
-            throw new RuntimeException("Solo se pueden finalizar viajes activos");
+            throw new NoSuchElementException("Solo se pueden finalizar viajes activos");
 
         //  Validar parada (Stop MS)
         Boolean validStop = stopClient.validateStop(endLat, endLon);
         if (Boolean.FALSE.equals(validStop))
-            throw new RuntimeException("No estás en una parada válida");
+            throw new NoSuchElementException("No estás en una parada válida");
 
         //  Cargar datos finales
         trip.setEndLat(endLat);
