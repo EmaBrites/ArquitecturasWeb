@@ -1,6 +1,11 @@
 server:
   port: 8080
 
+
+jwt:
+  secret: secretito
+  expiration: 3600 # Token expiration time in seconds
+
 spring:
   application:
     name: gateway-service
@@ -33,3 +38,6 @@ spring:
               uri: http://localhost:8084
               predicates:
                 - Path=/trip/**
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
