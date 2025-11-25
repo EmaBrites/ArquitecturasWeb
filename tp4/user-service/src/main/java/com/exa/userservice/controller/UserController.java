@@ -3,6 +3,7 @@ package com.exa.userservice.controller;
 import com.exa.userservice.dto.CreateUserDTO;
 import com.exa.userservice.dto.UpdateUserDTO;
 import com.exa.userservice.dto.UserDTO;
+import com.exa.userservice.dto.UserDetailsDTO;
 import com.exa.userservice.enums.AccountTypeEnum;
 import com.exa.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -151,6 +152,20 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/username/{username}")
+    @Operation(summary = "Get user by username")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User found successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
+    public ResponseEntity<UserDetailsDTO> getUserByUsername(@PathVariable String username) {
+        try {
+            return ResponseEntity.ok(userService.getUserByUsername(username));
+        } catch (AccountNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
