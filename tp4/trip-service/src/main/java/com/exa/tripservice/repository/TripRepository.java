@@ -24,4 +24,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
             @Param("from") LocalDateTime from,
             @Param("to") LocalDateTime to
     );
+
+        @Query("SELECT t.scooterId FROM Trip t WHERE FUNCTION('YEAR', t.startTime) = :year GROUP BY t.scooterId HAVING COUNT(t.id) >= :minTrips")
+        List<Long> findScootersWithMinTripsByYear(@Param("year") int year, @Param("minTrips") int minTrips);
 }

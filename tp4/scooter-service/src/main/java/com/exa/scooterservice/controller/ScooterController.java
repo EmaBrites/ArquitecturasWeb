@@ -151,4 +151,16 @@ public class ScooterController {
         List<NearbyDTO> nearby = scooterService.findNearby(lat, lon, radius);
         return ResponseEntity.ok(nearby);
     }
+
+    @GetMapping("/batch")
+    @Operation(summary = "Get scooters by a list of IDs")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "List of scooters", content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ScooterDTO.class)
+            ))
+    })
+    public ResponseEntity<List<ScooterDTO>> getScootersByIds(@RequestParam List<Integer> ids) {
+        List<ScooterDTO> scooters = scooterService.getScootersByIds(ids);
+        return ResponseEntity.ok(scooters);
+    }
 }

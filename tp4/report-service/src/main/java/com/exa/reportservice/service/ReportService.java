@@ -42,4 +42,11 @@ public class ReportService {
     public Double getTotalRevenue(LocalDate startDate, LocalDate endDate) {
         return accountClient.getTotalRevenue(startDate.format(FORMATTER), endDate.format(FORMATTER));
     }
+
+    public List<ScooterDTO> getScootersWithMinTripsByYear(int year, int minTrips) {
+        List<Long> scooterIds = tripClient.getScootersWithMinTripsByYear(year, minTrips);
+        return scooterClient.getScootersByIds(
+                scooterIds.stream().map(Long::intValue).collect(Collectors.toList())
+        );
+    }
 }

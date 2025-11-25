@@ -1,6 +1,7 @@
 package com.exa.reportservice.controller;
 
 import com.exa.reportservice.dto.AccountTransactionDTO;
+import com.exa.reportservice.dto.ScooterDTO;
 import com.exa.reportservice.dto.ScooterReportDTO;
 import com.exa.reportservice.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,5 +55,14 @@ public class ReportController {
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate) {
         return ResponseEntity.ok(reportService.getTotalRevenue(startDate, endDate));
+    }
+
+    @GetMapping("/scooters/min-trips")
+    @Operation(summary = "Get scooters with minimum trips by year")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved scooters with minimum trips")
+    })
+    public ResponseEntity<List<ScooterDTO>> getScootersWithMinTripsByYear(@RequestParam int year, @RequestParam int minTrips) {
+        return ResponseEntity.ok(reportService.getScootersWithMinTripsByYear(year, minTrips));
     }
 }

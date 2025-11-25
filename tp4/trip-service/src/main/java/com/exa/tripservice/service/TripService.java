@@ -132,4 +132,8 @@ public class TripService {
     public List<Trip> getTripsFiltered(Long accountId, Long scooterId, LocalDateTime from, LocalDateTime to) {
         return tripRepository.findFilteredTrips(accountId, scooterId, from, to);
     }
+
+    public List<Long> getScootersWithMinTripsByYear(int year, int minTrips) {
+        return tripRepository.findScootersWithMinTripsByYear(year, minTrips);
+    }
 }
