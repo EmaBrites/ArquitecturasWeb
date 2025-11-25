@@ -1,5 +1,6 @@
 package com.exa.userservice.repository;
 
+import com.exa.userservice.dto.UserDetailsDTO;
 import com.exa.userservice.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,5 +24,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             @Param("name") String name,
             Pageable pageable
     );
+
+    @Query("""
+        SELECT new com.exa.userservice.dto.UserDetailsDTO(u.email, u.password, u.roles)
+        FROM User u
+        WHERE u.email = :email
+        """)
+    UserDetailsDTO getUsersByEmail(String email);
 }
 

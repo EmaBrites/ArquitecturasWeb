@@ -3,6 +3,7 @@ package com.exa.userservice.service;
 import com.exa.userservice.enums.AccountTypeEnum;
 import com.exa.userservice.dto.*;
 import com.exa.userservice.entity.User;
+import com.exa.userservice.enums.RoleEnum;
 import com.exa.userservice.feignClients.AccountFeignClients;
 import com.exa.userservice.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,16 +24,22 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final AccountFeignClients accountFeignClients;
 
-    public UserService(UserRepository userRepository, AccountFeignClients accountFeignClients) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AccountFeignClients accountFeignClients) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         this.accountFeignClients = accountFeignClients;
     }
 
     public UserDTO createUser(CreateUserDTO dto) {
         User user = new User();
         BeanUtils.copyProperties(dto, user);
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        List<RoleEnum> roles = user.getRoles();
+        roles.add(RoleEnum.CUSTOMER);
+        user.setRoles(roles);
         User saved = userRepository.save(user);
         UserDTO result = new UserDTO();
         BeanUtils.copyProperties(saved, result);
@@ -100,4 +108,11 @@ public class UserService {
         });
     }
 
+    public UserDetailsDTO getUserByUsername(String username) throws AccountNotFoundException {
+        UserDetailsDTO usersByEmail = userRepository.getUsersByEmail(username);
+        if (usersByEmail == null) {
+            throw new AccountNotFoundException("Username not found");
+        }
+        return usersByEmail;
+    }
 }

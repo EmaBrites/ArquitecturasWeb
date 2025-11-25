@@ -1,5 +1,6 @@
 package com.exa.userservice.entity;
 
+import com.exa.userservice.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -41,5 +42,9 @@ public class User {
     @CollectionTable(name = "user_accounts", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "account_id")
     private List<Integer> accountIds = new ArrayList<>();
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private List<RoleEnum> roles = new ArrayList<>();
 
 }
