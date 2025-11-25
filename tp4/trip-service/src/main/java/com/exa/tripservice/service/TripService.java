@@ -77,17 +77,17 @@ public class TripService {
     }
 
     // US-TRIP-03 + US-TRIP-05
-    public Trip endTrip(Long tripId, double endLat, double endLon, Double kilometers) throws NoSuchElementException {
+    public Trip endTrip(Long tripId, double endLat, double endLon, Double kilometers) throws NoSuchElementException, IllegalArgumentException {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new NoSuchElementException("Viaje no encontrado"));
 
         if (!"ACTIVE".equals(trip.getStatus()))
-            throw new NoSuchElementException("Solo se pueden finalizar viajes activos");
+            throw new IllegalArgumentException("Solo se pueden finalizar viajes activos");
 
         //  Validar parada (Stop MS)
         Boolean validStop = stopClient.validateStop(endLat, endLon);
         if (Boolean.FALSE.equals(validStop))
-            throw new NoSuchElementException("No estás en una parada válida");
+            throw new IllegalArgumentException("No estás en una parada válida");
 
         //  Cargar datos finales
         trip.setEndLat(endLat);

@@ -70,20 +70,20 @@ public class UserService {
         return true;
     }
 
-    public void associateAccount(Integer userId, AccountTypeEnum accountType) {
-        userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    public void associateAccount(Integer userId, AccountTypeEnum accountType) throws AccountNotFoundException {
+        userRepository.findById(userId).orElseThrow(() -> new AccountNotFoundException("User not found"));
         CreateAccountDTO newAccount = new CreateAccountDTO(userId, accountType);
         accountFeignClients.createAccount(newAccount);
     }
 
-    public void disassociateAccount(Integer userId, Integer accountId) {
-        userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    public void disassociateAccount(Integer userId, Integer accountId) throws AccountNotFoundException {
+        userRepository.findById(userId).orElseThrow(() -> new AccountNotFoundException("User not found"));
         try {
             ResponseEntity<AccountDTO> accountResponse = accountFeignClients.getAccountById(accountId);
             if (accountResponse.getStatusCode().is2xxSuccessful() && accountResponse.getBody() != null) {
                 accountFeignClients.deleteAccount(accountId);
             } else {
-                throw new RuntimeException("Account not found");
+                throw new AccountNotFoundException("Account not found");
             }
         } catch (Exception e) {
             throw new RuntimeException("Account not found or account-service unavailable");
