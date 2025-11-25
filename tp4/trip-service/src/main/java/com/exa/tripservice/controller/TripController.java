@@ -122,4 +122,16 @@ public class TripController {
         List<Trip> trips = tripService.getTripsFiltered(accountId, scooterId, from, to);
         return ResponseEntity.ok(trips);
     }
+
+    @GetMapping("/scooters/min-trips")
+    @Operation(summary = "Get scooters with minimum trips by year")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of scooters")
+    })
+    public ResponseEntity<List<Long>> getScootersWithMinTripsByYear(
+            @RequestParam int year,
+            @RequestParam int minTrips) {
+        List<Long> scooterIds = tripService.getScootersWithMinTripsByYear(year, minTrips);
+        return ResponseEntity.ok(scooterIds);
+    }
 }

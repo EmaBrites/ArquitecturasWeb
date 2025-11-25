@@ -131,4 +131,13 @@ public class ScooterService {
         return R * c;
     }
 
+        public List<ScooterDTO> getScootersByIds(List<Integer> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Scooter> scooters = scooterRepository.findAllById(ids);
+        return scooters.stream()
+                .map(ScooterDTO::new)
+                .collect(Collectors.toList());
+    }
 }
