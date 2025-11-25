@@ -90,6 +90,7 @@ public class TripController {
     @Operation(summary = "End a trip")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Trip ended successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid trip data"),
             @ApiResponse(responseCode = "404", description = "Trip not found")
     })
     public ResponseEntity<Trip> endTrip(@PathVariable Long id, @RequestBody TripEndDTO dto) {
@@ -98,6 +99,8 @@ public class TripController {
             return ResponseEntity.ok(trip);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 

@@ -112,7 +112,7 @@ public class UserController {
         try {
             userService.associateAccount(id, type);
             return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
+        } catch (AccountNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -128,12 +128,9 @@ public class UserController {
             userService.disassociateAccount(id, accountId);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
-            if (e.getMessage().contains("not found")) {
-                return ResponseEntity.notFound().build();
-            } else if (e.getMessage().contains("unavailable")) {
-                return ResponseEntity.status(503).build();
-            }
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(503).build();
+        } catch (AccountNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
