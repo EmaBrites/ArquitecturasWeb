@@ -4,6 +4,7 @@ import com.exa.accountservice.dto.AccountDTO;
 import com.exa.accountservice.dto.ApiErrorDTO;
 import com.exa.accountservice.dto.CreateAccountDTO;
 import com.exa.accountservice.dto.UpdateAccountDTO;
+import com.exa.accountservice.dto.mp.PaymentResponseDTO;
 import com.exa.accountservice.enums.AccountStateEnum;
 import com.exa.accountservice.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -102,4 +103,14 @@ public class AccountController {
         AccountDTO updatedAccount = accountService.updateAccountState(id, accountState);
         return ResponseEntity.ok(updatedAccount);
     }
+
+    @PostMapping("/{id}/charge")
+    public ResponseEntity<PaymentResponseDTO> charge(
+            @PathVariable Integer id,
+            @RequestParam Double amount) {
+
+        PaymentResponseDTO response = accountService.chargeAccount(id, amount);
+        return ResponseEntity.ok(response);
+    }
+
 }

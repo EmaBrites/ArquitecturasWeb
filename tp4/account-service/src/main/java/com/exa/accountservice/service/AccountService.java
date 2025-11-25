@@ -3,10 +3,14 @@ package com.exa.accountservice.service;
 import com.exa.accountservice.dto.AccountDTO;
 import com.exa.accountservice.dto.CreateAccountDTO;
 import com.exa.accountservice.dto.UpdateAccountDTO;
+import com.exa.accountservice.dto.mp.PaymentRequestDTO;
+import com.exa.accountservice.dto.mp.PaymentResponseDTO;
 import com.exa.accountservice.entity.Account;
 import com.exa.accountservice.enums.AccountStateEnum;
+import com.exa.accountservice.feign.MpMockFeignClient;
 import com.exa.accountservice.repository.AccountRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +20,10 @@ import java.time.LocalDateTime;
 @Service
 @Transactional
 public class AccountService {
+
+    @Autowired
+    private MpMockFeignClient mpMock;
+
     private final AccountRepository accountRepository;
 
     public AccountService(AccountRepository accountRepository) {
@@ -98,4 +106,18 @@ public class AccountService {
             throw new IllegalStateException("Account must be ACTIVE to perform this operation");
         }
     }
+
+    public PaymentResponseDTO chargeAccount(Integer id, Double amount) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        PaymentRequestDTO request = new PaymentRequestDTO(
+                account.getId(),
+                amount,
+                "Account charge operation"
+        );
+
+        return mpMock.processPayment(request);
+    }
+
 }
