@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class TripDTO {
     private Long accountId;
-    private Long scooterId;
+    private String scooterId;
     private Double startLat;
     private Double startLon;
     private Double endLat;

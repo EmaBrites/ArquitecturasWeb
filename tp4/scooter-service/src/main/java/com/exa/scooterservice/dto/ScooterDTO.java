@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ScooterDTO {
-    private Integer id;
+    private String id;
     private String serial;
     private Double latitude;
     private Double longitude;

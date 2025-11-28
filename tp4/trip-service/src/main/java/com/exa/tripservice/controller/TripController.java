@@ -112,7 +112,7 @@ public class TripController {
     })
     public ResponseEntity<List<Trip>> getTripsFiltered(
             @RequestParam(required = false) Long accountId,
-            @RequestParam(required = false) Long scooterId,
+            @RequestParam(required = false) String scooterId,
             @Parameter(description = "Start date-time in ISO format (yyyy-MM-dd'T'HH:mm:ss)")
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
@@ -128,10 +128,10 @@ public class TripController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of scooters")
     })
-    public ResponseEntity<List<Long>> getScootersWithMinTripsByYear(
+    public ResponseEntity<List<String>> getScootersWithMinTripsByYear(
             @RequestParam int year,
             @RequestParam int minTrips) {
-        List<Long> scooterIds = tripService.getScootersWithMinTripsByYear(year, minTrips);
+        List<String> scooterIds = tripService.getScootersWithMinTripsByYear(year, minTrips);
         return ResponseEntity.ok(scooterIds);
     }
 }

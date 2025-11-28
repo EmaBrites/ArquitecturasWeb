@@ -59,9 +59,14 @@ public class ScooterController {
             )),
             @ApiResponse(responseCode = "404", description = "Scooter not found")
     })
-    public ResponseEntity<ScooterDTO> getById(@PathVariable Integer id) {
-        ScooterDTO scooterDTO = scooterService.getScooterById(id);
-        return ResponseEntity.ok(scooterDTO);
+    public ResponseEntity<ScooterDTO> getById(@PathVariable String id) {
+        try{
+            ScooterDTO scooterDTO = scooterService.getScooterById(id);
+            return ResponseEntity.ok(scooterDTO);
+        }
+        catch (NotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/{id}")
@@ -72,7 +77,7 @@ public class ScooterController {
             )),
             @ApiResponse(responseCode = "404", description = "Scooter not found")
     })
-    public ResponseEntity<ScooterDTO> update(@PathVariable Integer id, @Valid @RequestBody CreateScooterDTO scooter) {
+    public ResponseEntity<ScooterDTO> update(@PathVariable String id, @Valid @RequestBody CreateScooterDTO scooter) {
         try{
             ScooterDTO updatedScooter = scooterService.updateScooter(id, scooter);
             return ResponseEntity.ok(updatedScooter);
@@ -90,7 +95,7 @@ public class ScooterController {
             )),
             @ApiResponse(responseCode = "404", description = "Scooter not found")
     })
-    public ResponseEntity<ScooterDTO> delete(@PathVariable Integer id) {
+    public ResponseEntity<ScooterDTO> delete(@PathVariable String id) {
         try {
             ScooterDTO deletedScooter = scooterService.deleteScooter(id);
             return ResponseEntity.ok(deletedScooter);
@@ -108,7 +113,7 @@ public class ScooterController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "Scooter not found")
     })
-    public ResponseEntity<ScooterDTO> updateState(@PathVariable Integer id, @RequestBody StateUpdateDTO dto) {
+    public ResponseEntity<ScooterDTO> updateState(@PathVariable String id, @RequestBody StateUpdateDTO dto) {
         try{
             ScooterDTO updatedScooter = scooterService.updateState(id, dto.getState());
             return ResponseEntity.ok(updatedScooter);
@@ -126,7 +131,7 @@ public class ScooterController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "Scooter not found")
     })
-    public ResponseEntity<ScooterDTO> updateTelemetry(@PathVariable Integer id, @RequestBody TelemetryDTO dto) {
+    public ResponseEntity<ScooterDTO> updateTelemetry(@PathVariable String id, @RequestBody TelemetryDTO dto) {
         try{
             ScooterDTO updatedScooter = scooterService.updateTelemetry(id, dto);
             return ResponseEntity.ok(updatedScooter);
@@ -159,7 +164,7 @@ public class ScooterController {
                     mediaType = "application/json", schema = @Schema(implementation = ScooterDTO.class)
             ))
     })
-    public ResponseEntity<List<ScooterDTO>> getScootersByIds(@RequestParam List<Integer> ids) {
+    public ResponseEntity<List<ScooterDTO>> getScootersByIds(@RequestParam List<String> ids) {
         List<ScooterDTO> scooters = scooterService.getScootersByIds(ids);
         return ResponseEntity.ok(scooters);
     }

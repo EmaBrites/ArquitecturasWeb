@@ -15,7 +15,7 @@ public class Trip {
     private Long id;
 
     private Long accountId;
-    private Long scooterId;
+    private String scooterId;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
