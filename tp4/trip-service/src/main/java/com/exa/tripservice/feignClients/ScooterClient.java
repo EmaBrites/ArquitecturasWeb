@@ -11,6 +11,6 @@ import java.util.Map;
 public interface ScooterClient {
 
     @PutMapping("/scooters/{id}/state")
-    void updateScooterState(@PathVariable("id") Long id, @RequestBody StateUpdateDTO dto);
+    void updateScooterState(@PathVariable("id") String id, @RequestBody StateUpdateDTO dto);
 }
 

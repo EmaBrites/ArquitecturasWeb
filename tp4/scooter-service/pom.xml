@@ -34,17 +34,9 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JPA (persistencia con H2 o MySQL) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <!-- Base de datos en memoria (solo desarrollo/test) -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
         <!-- Lombok (para getters/setters automáticos) -->

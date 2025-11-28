@@ -1,10 +1,15 @@
 services:
-  db:
-    image: mysql
-    container_name: scooter-service
-    restart: always
-    environment:
-      MYSQL_DATABASE: scooter_db
-      MYSQL_ROOT_PASSWORD: password
+  mongo:
+    image: mongo:latest
+    container_name: mongo-db
     ports:
-      - "3312:3306"
+      - "3312:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: scooter_db
+    volumes:
+      - mongo_data:/data/db # Persistencia de datos
+
+volumes:
+  mongo_data:

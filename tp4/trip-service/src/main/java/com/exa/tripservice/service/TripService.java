@@ -129,11 +129,11 @@ public class TripService {
     }
 
     // US-TRIP-04
-    public List<Trip> getTripsFiltered(Long accountId, Long scooterId, LocalDateTime from, LocalDateTime to) {
+    public List<Trip> getTripsFiltered(Long accountId, String scooterId, LocalDateTime from, LocalDateTime to) {
         return tripRepository.findFilteredTrips(accountId, scooterId, from, to);
     }
 
-    public List<Long> getScootersWithMinTripsByYear(int year, int minTrips) {
+    public List<String> getScootersWithMinTripsByYear(int year, int minTrips) {
         return tripRepository.findScootersWithMinTripsByYear(year, minTrips);
     }
 }

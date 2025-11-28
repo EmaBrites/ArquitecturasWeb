@@ -38,13 +38,13 @@ public class ScooterService {
         return scooters;
     }
 
-    public ScooterDTO getScooterById(Integer id) {
+    public ScooterDTO getScooterById(String id) {
         return scooterRepository.findById(id)
                 .map(ScooterDTO::new)
                 .orElseThrow(()-> new NotFoundException("Scooter",id));
     }
 
-    public ScooterDTO updateScooter(int id, CreateScooterDTO scooterDTO) {
+    public ScooterDTO updateScooter(String id, CreateScooterDTO scooterDTO) {
         Scooter scooter = scooterRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("scooter",id));
         BeanUtils.copyProperties(scooterDTO,scooter,"id");
@@ -53,7 +53,7 @@ public class ScooterService {
         return new ScooterDTO(updatedScooter);
     }
 
-    public ScooterDTO deleteScooter(int id) {
+    public ScooterDTO deleteScooter(String id) {
         Scooter scooter = scooterRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Scooter",id));
 
@@ -62,7 +62,7 @@ public class ScooterService {
     }
 
     // ADMIN CAMBIA ESTADO (mantenimiento/de baja) TODO suena a redundante con el update general, podría reusarse
-    public ScooterDTO updateState(int id, ScooterState newState) {
+    public ScooterDTO updateState(String id, ScooterState newState) {
         Scooter scooter = scooterRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException("scooter",id));
         scooter.setState(newState);
@@ -71,7 +71,7 @@ public class ScooterService {
     }
 
     //SISTEMA RECIBE INFO NUEVA DEL GPS DEL MONOPATIN
-    public ScooterDTO updateTelemetry(int id, TelemetryDTO telemetry) {
+    public ScooterDTO updateTelemetry(String id, TelemetryDTO telemetry) {
         Scooter scooter = scooterRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("scooter",id));
             // actualizar posición
@@ -131,7 +131,7 @@ public class ScooterService {
         return R * c;
     }
 
-        public List<ScooterDTO> getScootersByIds(List<Integer> ids) {
+        public List<ScooterDTO> getScootersByIds(List<String> ids) {
         if (ids == null || ids.isEmpty()) {
             return Collections.emptyList();
         }

@@ -11,7 +11,7 @@ import java.util.List;
 public interface TripRepository extends JpaRepository<Trip, Long> {
 
     List<Trip> findByAccountId(Long accountId);
-    List<Trip> findByScooterId(Long scooterId);
+    List<Trip> findByScooterId(String scooterId);
 
     @Query("SELECT t FROM Trip t WHERE " +
             "(:accountId IS NULL OR t.accountId = :accountId) AND " +
@@ -20,11 +20,11 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
             "(:to IS NULL OR t.endTime <= :to)")
     List<Trip> findFilteredTrips(
             @Param("accountId") Long accountId,
-            @Param("scooterId") Long scooterId,
+            @Param("scooterId") String scooterId,
             @Param("from") LocalDateTime from,
             @Param("to") LocalDateTime to
     );
 
         @Query("SELECT t.scooterId FROM Trip t WHERE FUNCTION('YEAR', t.startTime) = :year GROUP BY t.scooterId HAVING COUNT(t.id) >= :minTrips")
-        List<Long> findScootersWithMinTripsByYear(@Param("year") int year, @Param("minTrips") int minTrips);
+        List<String> findScootersWithMinTripsByYear(@Param("year") int year, @Param("minTrips") int minTrips);
 }
