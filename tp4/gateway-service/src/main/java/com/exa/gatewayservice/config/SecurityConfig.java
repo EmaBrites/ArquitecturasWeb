@@ -50,11 +50,28 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // Auth público
-                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
 
-                        // Reglas protegidas
-                        .requestMatchers("/accounts/**").hasAuthority(AuthorityConstant.ADMIN.name())
+                        // Reglas Accounts
+                        .requestMatchers("/accounts/**").hasAnyAuthority(AuthorityConstant.ADMIN.name(),AuthorityConstant.USER.name())
+
+                        // Reglas Reports
+                        .requestMatchers("/reports/**").hasAuthority(AuthorityConstant.ADMIN.name())
+
+                        // Reglas Scooters
+                        .requestMatchers("/scooters/**").hasAuthority(AuthorityConstant.USER.name())
+
+                        // Reglas Stops
+                        .requestMatchers("/stops/**").hasAuthority(AuthorityConstant.USER.name())
+
+                        // Reglas Trips
+                        .requestMatchers("/trips/**").hasAuthority(AuthorityConstant.USER.name())
+
+                        // Reglas Users
+                        .requestMatchers("/users/**").hasAuthority(AuthorityConstant.USER.name())
                         .anyRequest().authenticated()
+
+
                 )
                 .sessionManagement(sessionManager ->
                         sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

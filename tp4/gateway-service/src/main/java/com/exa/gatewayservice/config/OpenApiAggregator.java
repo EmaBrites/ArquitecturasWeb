@@ -34,7 +34,7 @@ public class OpenApiAggregator {
     public GroupedOpenApi reportServiceApi() {
         return GroupedOpenApi.builder()
                 .group("report-service")
-                .pathsToMatch("/admin/reports/**") //TODO esto debería ser /reports solo, admin es rol
+                .pathsToMatch("/reports/**")
                 .addOpenApiCustomizer(remoteServiceCustomizer("http://localhost:8085/v3/api-docs"))
                 .build();
     }
