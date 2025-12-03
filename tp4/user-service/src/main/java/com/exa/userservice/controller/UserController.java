@@ -154,7 +154,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/username/{username}")
+    @GetMapping("/username/{username}") //TODO esto se usa para algo?
     @Operation(summary = "Get user by username")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found successfully",

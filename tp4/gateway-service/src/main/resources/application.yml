@@ -4,32 +4,46 @@ server:
 spring:
   application:
     name: gateway-service
-  cloud:
-    gateway:
-      server:
-        webmvc:
-          routes:
-            - id: user-service
-              uri: http://localhost:8002
-              predicates:
-                - Path=/users/**
-            - id: stop-service
-              uri: http://localhost:8086
-              predicates:
-                - Path=/stop/**
-            - id: scooter-service
-              uri: http://localhost:8081
-              predicates:
-                - Path=/scooter/**
-            - id: report-service
-              uri: http://localhost:8085
-              predicates:
-                - Path=/report/**
-            - id: account-service
-              uri: http://localhost:8001
-              predicates:
-                - Path=/account/**
-            - id: trip-service
-              uri: http://localhost:8084
-              predicates:
-                - Path=/trip/**
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3315/gatewaydb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+  main:
+    web-application-type: servlet # Fuerza el uso de WebMVC
+#  cloud:
+#    gateway:
+#      server:
+#        webmvc:
+#          routes:
+#            - id: user-service
+#              uri: http://localhost:8002
+#              predicates:
+#                - Path=/users/**
+#            - id: stop-service
+#              uri: http://localhost:8086
+#              predicates:
+#                - Path=/stop/**
+#            - id: scooter-service
+#              uri: http://localhost:8081
+#              predicates:
+#                - Path=/scooter/**
+#            - id: report-service
+#              uri: http://localhost:8085
+#              predicates:
+#                - Path=/report/**
+#            - id: account-service
+#              uri: http://localhost:8001
+#              predicates:
+#                - Path=/account/**
+#            - id: trip-service
+#              uri: http://localhost:8084
+#              predicates:
+#                - Path=/trip/**

@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     );
 
     @Query("""
-        SELECT new com.exa.userservice.dto.UserDetailsDTO(u.email, u.password, u.roles)
+        SELECT new com.exa.userservice.dto.UserDetailsDTO(u.email)
         FROM User u
         WHERE u.email = :email
         """)

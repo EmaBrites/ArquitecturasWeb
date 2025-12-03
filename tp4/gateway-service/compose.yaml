@@ -1,0 +1,11 @@
+version: "3"
+services:
+  db:
+    image: mysql
+    container_name: gw-service-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: gatewaydb
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3315:3306"

@@ -24,9 +24,6 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String password;
-
     @Column
     private String phone;
 
@@ -42,9 +39,5 @@ public class User {
     @CollectionTable(name = "user_accounts", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "account_id")
     private List<Integer> accountIds = new ArrayList<>();
-
-    @Column
-    @Enumerated(EnumType.STRING)
-    private List<RoleEnum> roles = new ArrayList<>();
 
 }
