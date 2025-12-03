@@ -1,0 +1,42 @@
+{
+  "tools": [
+	{
+	  "type": "function",
+	  "function": {
+		"name": "get_trips",
+		"description": "Get all trips",
+		"parameters": {}
+	  }
+	}
+  ],
+  "messages": [
+	{
+	  "role": "system",
+	  "content": "Sos un sistema de alquiler de monopatines electrónicos en distintas paradas de una ciudad capital. Solo usa las tools para contestar."
+	},
+	{
+	  "role": "user",
+	  "content": "¿Que informacion puedo obtener de un viaje?"
+	},
+	{
+	  "role": "assistant",
+	  "tool_calls": [
+		{
+		  "id": "8xtjkjebv",
+		  "type": "function",
+		  "function": {
+			"name": "get_trips",
+			"arguments": "{}"
+		  }
+		}
+	  ]
+	},
+	{
+	  "role": "tool",
+	  "tool_call_id": "8xtjkjebv",
+	  "name": "get_trips",
+	  "content": "{[]}"
+	}
+  ],
+  "model": "llama-3.3-70b-versatile"
+}

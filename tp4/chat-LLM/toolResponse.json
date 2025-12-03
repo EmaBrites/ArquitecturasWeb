@@ -1,0 +1,79 @@
+{
+  "response": {
+	"id": "chatcmpl-9e0b2133-6a95-49e5-944e-90e72aa72906",
+	"object": "chat.completion",
+	"created": 1764639555,
+	"model": "llama-3.3-70b-versatile",
+	"choices": [
+	  {
+		"index": 0,
+		"message": {
+		  "role": "assistant",
+		  "content": "La información que puedes obtener de un viaje en un sistema de alquiler de monopatines electrónicos puede variar dependiendo de la implementación y los datos recopilados por el sistema. Sin embargo, aquí hay algunos ejemplos de información que podrías obtener:nn1. **Detalles del viaje**: La fecha y hora de inicio y fin del viaje, la duración del viaje, la distancia recorrida y la velocidad promedio.n2. **Información del usuario**: El identificador del usuario que realizó el viaje, su nombre y apellidos (si se han proporcionado), y su dirección de correo electrónico (si se ha proporcionado).n3. **Monopatín utilizado**: El identificador del monopatín utilizado durante el viaje, su modelo y cualquier otra información relevante sobre el vehículo.n4. **Ruta recorrida**: La ruta exacta que siguió el usuario durante el viaje, incluyendo los puntos de inicio y fin, y cualquier desvío o cambio de dirección que se produjera durante el viaje.n5. **Consumo de energía**: La cantidad de energía consumida por el monopatín durante el viaje, lo que puede ayudar a evaluar la eficiencia del vehículo y a identificar patrones de comportamiento del usuario.n6. **Estado del monopatín**: El estado del monopatín al inicio y al final del viaje, incluyendo el nivel de carga de la batería, el estado de los frenos y cualquier otro parámetro relevante.n7. **Incidentes o problemas**: Cualquier incidente o problema que se produjera durante el viaje, como una caída, un accidente o un problema técnico con el monopatín.n8. **Pagos y tarificación**: La cantidad pagada por el viaje, incluyendo cualquier cargo adicional por servicios adicionales, como el alquiler de un casco o la utilización de un servicio de entrega de monopatines.n9. **Calificación del usuario**: La calificación que el usuario otorga al viaje, lo que puede ayudar a evaluar la satisfacción del usuario y a identificar áreas de mejora para el sistema de alquiler de monopatines.n10. **Datos de geolocalización**: La ubicación geográfica exacta del monopatín en cualquier momento durante el viaje, lo que puede ser útil para evaluar el uso del sistema de alquiler de monopatines en diferentes zonas de la ciudad.nnEs importante destacar que la recopilación y el uso de estos datos deben cumplir con las leyes y regulaciones de privacidad y protección de datos aplicables en cada país o región."
+		},
+		"logprobs": null,
+		"finish_reason": "stop"
+	  }
+	],
+	"usage": {
+	  "queue_time": 0.152028352,
+	  "prompt_tokens": 267,
+	  "prompt_time": 0.013045576,
+	  "completion_tokens": 603,
+	  "completion_time": 1.877670396,
+	  "total_tokens": 870,
+	  "total_time": 1.890715972
+	},
+	"usage_breakdown": null,
+	"system_fingerprint": "fp_43d97c5965",
+	"x_groq": {
+	  "id": "req_01kbebddwaf4ka5ycmah4qntdn",
+	  "seed": 1218016896
+	},
+	"service_tier": "on_demand"
+  }
+}
+{
+  "response": {
+	"id": "chatcmpl-fa1ad48c-e188-4ff9-8763-ef7606f09427",
+	"object": "chat.completion",
+	"created": 1764722079,
+	"model": "llama-3.1-8b-instant",
+	"choices": [
+	  {
+		"index": 0,
+		"message": {
+		  "role": "assistant",
+		  "tool_calls": [
+			{
+			  "id": "krbheqqfh",
+			  "type": "function",
+			  "function": {
+				"name": "get_trips",
+				"arguments": "null"
+			  }
+			}
+		  ]
+		},
+		"logprobs": null,
+		"finish_reason": "tool_calls"
+	  }
+	],
+	"usage": {
+	  "queue_time": 0.279087073,
+	  "prompt_tokens": 237,
+	  "prompt_time": 0.024327535,
+	  "completion_tokens": 9,
+	  "completion_time": 0.026631964,
+	  "total_tokens": 246,
+	  "total_time": 0.050959499
+	},
+	"usage_breakdown": null,
+	"system_fingerprint": "fp_1151d4f23c",
+	"x_groq": {
+	  "id": "req_01kbgt3xamfeka2897xbwq825r",
+	  "seed": 1100324321
+	},
+	"service_tier": "on_demand"
+  }
+}
