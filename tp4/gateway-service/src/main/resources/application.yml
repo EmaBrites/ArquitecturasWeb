@@ -18,6 +18,11 @@ spring:
 
   main:
     web-application-type: servlet # Fuerza el uso de WebMVC
+springdoc:
+  api-docs:
+    enabled: true
+    groups:
+      enabled: true
 #  cloud:
 #    gateway:
 #      server:
