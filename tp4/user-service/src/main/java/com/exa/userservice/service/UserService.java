@@ -24,22 +24,19 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final AccountFeignClients accountFeignClients;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AccountFeignClients accountFeignClients) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.accountFeignClients = accountFeignClients;
     }
 
     public UserDTO createUser(CreateUserDTO dto) {
         User user = new User();
         BeanUtils.copyProperties(dto, user);
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        List<RoleEnum> roles = user.getRoles();
-        roles.add(RoleEnum.CUSTOMER);
-        user.setRoles(roles);
+//        List<RoleEnum> roles = user.getRoles(); //TODO validar esto, en teória se debería manejar desde el gw los roles
+//        roles.add(RoleEnum.CUSTOMER);
+//        user.setRoles(roles);
         User saved = userRepository.save(user);
         UserDTO result = new UserDTO();
         BeanUtils.copyProperties(saved, result);

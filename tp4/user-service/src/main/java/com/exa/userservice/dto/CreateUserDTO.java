@@ -8,6 +8,5 @@ public class CreateUserDTO implements Serializable {
     String firstName;
     String lastName;
     String email;
-    String password;
     String phone;
 }

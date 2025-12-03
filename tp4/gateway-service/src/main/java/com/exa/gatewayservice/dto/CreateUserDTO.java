@@ -6,9 +6,8 @@ import java.io.Serializable;
 
 @Data
 public class CreateUserDTO implements Serializable {
-    String firstName;
-    String lastName;
-    String email;
-    String password;
-    String phone;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
 }

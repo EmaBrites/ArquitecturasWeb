@@ -11,6 +11,4 @@ import java.util.List;
 @AllArgsConstructor
 public class UserDetailsDTO implements Serializable {
     private String username;
-    private String password;
-    private List<RoleEnum> roles;
 }
