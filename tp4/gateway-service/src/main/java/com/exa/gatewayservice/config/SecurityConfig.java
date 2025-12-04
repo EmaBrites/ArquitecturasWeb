@@ -5,10 +5,8 @@ import com.exa.gatewayservice.repository.AuthUserRepository;
 import com.exa.gatewayservice.security.AuthorityConstant;
 import com.exa.gatewayservice.security.JwtFilter;
 import com.exa.gatewayservice.service.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -40,38 +38,20 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-
-                        // Swagger público
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-
-                        // Auth público
                         .requestMatchers("/auth/**").permitAll()
-
-                        // Reglas Accounts
-                        .requestMatchers("/accounts/**").hasAnyAuthority(AuthorityConstant.ADMIN.name(),AuthorityConstant.USER.name())
-
-                        // Reglas Reports
-                        .requestMatchers("/reports/**").hasAuthority(AuthorityConstant.ADMIN.name())
-
-                        // Reglas Scooters
-                        .requestMatchers("/scooters/**").hasAuthority(AuthorityConstant.USER.name())
-
-                        // Reglas Stops
-                        .requestMatchers("/stops/**").hasAuthority(AuthorityConstant.USER.name())
-
-                        // Reglas Trips
-                        .requestMatchers("/trips/**").hasAuthority(AuthorityConstant.USER.name())
-
-                        // Reglas Users
-                        .requestMatchers("/users/**").hasAuthority(AuthorityConstant.USER.name())
+                        .requestMatchers("/accounts/**").hasAnyAuthority(AuthorityConstant.ADMIN.getAuthority(),AuthorityConstant.USER.getAuthority())
+                        .requestMatchers("/reports/**").hasAuthority(AuthorityConstant.ADMIN.getAuthority())
+                        .requestMatchers("/scooters/**").hasAuthority(AuthorityConstant.USER.getAuthority())
+                        .requestMatchers("/stops/**").hasAuthority(AuthorityConstant.USER.getAuthority())
+                        .requestMatchers("/trips/**").hasAuthority(AuthorityConstant.USER.getAuthority())
+                        .requestMatchers("/users/**").hasAuthority(AuthorityConstant.USER.getAuthority())
                         .anyRequest().authenticated()
-
-
                 )
                 .sessionManagement(sessionManager ->
                         sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

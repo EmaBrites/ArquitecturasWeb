@@ -13,8 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @AllArgsConstructor
 public class AuthService {
@@ -44,7 +42,7 @@ public class AuthService {
     }
 
     public AuthResponse signUp(RegisterRequest registerRequest) {
-        Role roleFound = roleRepository.findByName(registerRequest.getRoles());
+        Role roleFound = roleRepository.findByName(registerRequest.getRole().getAuthority());
 
         if(roleFound == null){
             return new AuthResponse("No existe el rol");

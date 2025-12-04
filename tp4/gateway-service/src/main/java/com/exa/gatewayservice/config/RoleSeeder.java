@@ -16,8 +16,8 @@ public class RoleSeeder {
 
     @PostConstruct
     public void seedRoles() {
-        createRoleIfNotExists("USER");
-        createRoleIfNotExists("ADMIN");
+        createRoleIfNotExists(AuthorityConstant.USER.getAuthority());
+        createRoleIfNotExists(AuthorityConstant.ADMIN.getAuthority());
     }
 
     private void createRoleIfNotExists(String roleName) {
