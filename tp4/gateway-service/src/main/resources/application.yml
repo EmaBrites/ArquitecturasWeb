@@ -4,7 +4,6 @@ server:
 spring:
   application:
     name: gateway-service
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3315/gatewaydb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -18,6 +17,9 @@ spring:
 
   main:
     web-application-type: servlet # Fuerza el uso de WebMVC
+  docker:
+    compose:
+      file: ./gateway-service/compose.yaml
 springdoc:
   api-docs:
     enabled: true

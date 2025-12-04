@@ -1,12 +1,12 @@
 package com.exa.gatewayservice.dto;
 
+import com.exa.gatewayservice.security.AuthorityConstant;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class RegisterRequest {
     private CreateUserDTO createUserDTO;
-    private String roles;
+    private AuthorityConstant role;
     private String username;
     private String password;
 }

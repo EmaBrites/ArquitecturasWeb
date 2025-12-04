@@ -1,6 +1,9 @@
 package com.exa.gatewayservice.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.Schema;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
@@ -76,25 +79,34 @@ public class OpenApiAggregator {
     }
 
 
-
     private OpenApiCustomizer remoteServiceCustomizer(String url) {
         return openApi -> {
-            OpenAPI remoteApi = webClient.get()
+            JsonNode remoteApiJson = webClient.get()
                     .uri(url)
                     .retrieve()
-                    .bodyToMono(OpenAPI.class)
+                    .bodyToMono(JsonNode.class)
                     .block();
 
-            if (remoteApi != null && remoteApi.getPaths() != null) {
-                openApi.getPaths().putAll(remoteApi.getPaths());
+            if (remoteApiJson == null) {
+                return;
             }
 
-            if (remoteApi != null && remoteApi.getComponents() != null) {
-                if (openApi.getComponents().getSchemas() == null) {
-                    openApi.getComponents().setSchemas(remoteApi.getComponents().getSchemas());
-                } else {
-                    openApi.getComponents().getSchemas().putAll(remoteApi.getComponents().getSchemas());
-                }
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            JsonNode pathsNode = remoteApiJson.get("paths");
+            if (pathsNode != null && pathsNode.isObject()) {
+                pathsNode.fields().forEachRemaining(entry -> {
+                    PathItem pathItem = objectMapper.convertValue(entry.getValue(), PathItem.class);
+                    openApi.getPaths().addPathItem(entry.getKey(), pathItem);
+                });
+            }
+
+            JsonNode schemasNode = remoteApiJson.path("components").path("schemas");
+            if (schemasNode != null && schemasNode.isObject()) {
+                schemasNode.fields().forEachRemaining(entry -> {
+                    Schema<?> schema = objectMapper.convertValue(entry.getValue(), Schema.class);
+                    openApi.getComponents().addSchemas(entry.getKey(), schema);
+                });
             }
         };
     }
